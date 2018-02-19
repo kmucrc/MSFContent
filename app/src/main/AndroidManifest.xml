@@ -41,6 +41,12 @@
         <activity android:name=".home.UIScene"/>
         <activity android:name=".connection.DeviceListActivity"/>
         <activity android:name=".base.MainActivity" />
+        <activity android:name=".notification.NotificationScene">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".home.UIScene" />
+        </activity>
+
 
 
     </application>

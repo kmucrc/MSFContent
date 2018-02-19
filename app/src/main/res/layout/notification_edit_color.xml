@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft = "10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"/>
+    <ImageButton
+        android:id="@+id/whiteButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"/>
+    <ImageButton
+        android:id="@+id/redButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FF0000"/>
+    <ImageButton
+        android:id="@+id/greenButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00FF00"/>
+    <ImageButton
+        android:id="@+id/yellowButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFF00"/>
+    <ImageButton
+        android:id="@+id/blueButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#0000FF"/>
+    <ImageButton
+        android:id="@+id/vibebutton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"/>
+</LinearLayout>

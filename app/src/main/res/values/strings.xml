@@ -1,3 +1,31 @@
 <resources>
     <string name="app_name">MSFContent</string>
+    <string name="title_activity_connection_scence">ConnectionScence</string>
+
+    <string name="service_name">BTCTemplateService</string>
+    <string name="bt_state_init">initializing</string>
+    <string name="select_device">Select a device to connect</string>
+    <string name="connect">Connect device</string>
+    <string name="discoverable">Discover device</string>
+    <string name="title_paired_devices">Paired devices list</string>
+    <string name="title_other_devices">Other devices list</string>
+    <string name="button_scan">Scan devices</string>
+    <string name="none_paired">No paired devices</string>
+    <string name="scanning">scanning.....</string>
+    <string name="none_found">Can not find any devices</string>
+    <string name="bt_not_enabled_leaving">Bluetooth is not enabled</string>
+    <string name="bt_title">Bluetooth</string>
+    <string name="bt_state_wait">waiting</string>
+    <string name="bt_state_connect">connecting...</string>
+    <string name="bt_state_connected">connected...</string>
+    <string name="bt_state_error">error</string>
+    <string name="bt_cmd_sending_error">cmd sending error</string>
+    <string name="settings_background_service">Run in background</string>
+    <string name="title_example">Example</string>
+    <string name="title_ll_settings">LL settings</string>
+    <string name="picture">Picture</string>
+    <string name="description_info">Info</string>
+    <string name="request_permission">This sample needs camera permission.</string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+
 </resources>

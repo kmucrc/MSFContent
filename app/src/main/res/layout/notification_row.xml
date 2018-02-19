@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="fill_parent"
     android:layout_height="wrap_content">
+
     <ImageView
         android:id="@+id/image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/pip"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft = "10dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:src="@drawable/pip" />
+
     <TextView
         android:id="@+id/label"
-        android:layout_width = "240dp"
-        android:layout_height = "wrap_content"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:typeface="sans"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"/>
+        android:layout_toEndOf="@+id/image"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
     <CheckBox
         android:id="@+id/selected"
-        android:button="@drawable/checkboxdraw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scaleX="0.7"
-        android:scaleY="0.7"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
-        android:focusable="false"/>
-</LinearLayout>
+        android:button="@drawable/checkboxdraw"
+        android:focusable="false"
+        android:scaleX="0.7"
+        android:scaleY="0.7" />
+
+</RelativeLayout>
+

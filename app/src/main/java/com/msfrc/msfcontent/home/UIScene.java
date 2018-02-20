@@ -18,6 +18,7 @@ import com.msfrc.msfcontent.colorpicker.ColorPickerActivity;
 import com.msfrc.msfcontent.connection.ConnectionScene;
 import com.msfrc.msfcontent.contacts.ContactScene;
 import com.msfrc.msfcontent.notification.NotificationScene;
+import com.msfrc.msfcontent.preference.PreferenceScene;
 
 import java.util.ArrayList;
 
@@ -95,10 +96,10 @@ public class UIScene extends AppCompatActivity implements AdapterView.OnItemClic
                 Intent colorPickerSceneIntent = new Intent(getApplicationContext(), ColorPickerActivity.class);
                 startActivity(colorPickerSceneIntent);
                 break;
-//            case 5:
-//                Intent preferenceSceneIntent = new Intent(getApplicationContext(), PreferenceScene.class);
-//                startActivity(preferenceSceneIntent);
-//                break;
+            case 5:
+                Intent preferenceSceneIntent = new Intent(getApplicationContext(), PreferenceScene.class);
+                startActivity(preferenceSceneIntent);
+                break;
 //            case 6:
 //                Intent helpSceneIntent = new Intent(getApplicationContext(), Help.class);
 //                startActivity(helpSceneIntent);

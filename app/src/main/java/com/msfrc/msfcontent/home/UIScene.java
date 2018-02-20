@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.colorpicker.ColorPickerActivity;
 import com.msfrc.msfcontent.connection.ConnectionScene;
 import com.msfrc.msfcontent.contacts.ContactScene;
 import com.msfrc.msfcontent.notification.NotificationScene;
@@ -90,10 +91,10 @@ public class UIScene extends AppCompatActivity implements AdapterView.OnItemClic
 //                Intent clickSceneIntent = new Intent(getApplicationContext(), ClickScene.class);
 //                startActivity(clickSceneIntent);
 //                break;
-//            case 4:
-//                Intent colorPickerSceneIntent = new Intent(getApplicationContext(), ColorPickerActivity.class);
-//                startActivity(colorPickerSceneIntent);
-//                break;
+            case 4:
+                Intent colorPickerSceneIntent = new Intent(getApplicationContext(), ColorPickerActivity.class);
+                startActivity(colorPickerSceneIntent);
+                break;
 //            case 5:
 //                Intent preferenceSceneIntent = new Intent(getApplicationContext(), PreferenceScene.class);
 //                startActivity(preferenceSceneIntent);

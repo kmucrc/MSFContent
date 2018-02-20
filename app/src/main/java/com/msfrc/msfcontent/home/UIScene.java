@@ -17,6 +17,7 @@ import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.colorpicker.ColorPickerActivity;
 import com.msfrc.msfcontent.connection.ConnectionScene;
 import com.msfrc.msfcontent.contacts.ContactScene;
+import com.msfrc.msfcontent.help.Help;
 import com.msfrc.msfcontent.notification.NotificationScene;
 import com.msfrc.msfcontent.preference.PreferenceScene;
 
@@ -100,10 +101,10 @@ public class UIScene extends AppCompatActivity implements AdapterView.OnItemClic
                 Intent preferenceSceneIntent = new Intent(getApplicationContext(), PreferenceScene.class);
                 startActivity(preferenceSceneIntent);
                 break;
-//            case 6:
-//                Intent helpSceneIntent = new Intent(getApplicationContext(), Help.class);
-//                startActivity(helpSceneIntent);
-//                break;
+            case 6:
+                Intent helpSceneIntent = new Intent(getApplicationContext(), Help.class);
+                startActivity(helpSceneIntent);
+                break;
         }
     }
 }

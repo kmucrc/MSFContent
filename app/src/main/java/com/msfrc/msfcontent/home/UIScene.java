@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.connection.ConnectionScene;
+import com.msfrc.msfcontent.contacts.ContactScene;
 import com.msfrc.msfcontent.notification.NotificationScene;
 
 import java.util.ArrayList;
@@ -81,10 +82,10 @@ public class UIScene extends AppCompatActivity implements AdapterView.OnItemClic
                 Intent notificationSceneIntent = new Intent(getApplicationContext(), NotificationScene.class);
                 startActivity(notificationSceneIntent);
                 break;
-//            case 2:
-//                Intent contactSceneIntent = new Intent(getApplicationContext(), ContactScene.class);
-//                startActivity(contactSceneIntent);
-//                break;
+            case 2:
+                Intent contactSceneIntent = new Intent(getApplicationContext(), ContactScene.class);
+                startActivity(contactSceneIntent);
+                break;
 //            case 3:
 //                Intent clickSceneIntent = new Intent(getApplicationContext(), ClickScene.class);
 //                startActivity(clickSceneIntent);

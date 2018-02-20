@@ -46,6 +46,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".home.UIScene" />
         </activity>
+        <activity android:name=".contacts.ContactScene">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".home.UIScene" />
+        </activity>
 
 
 

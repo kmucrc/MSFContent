@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id = "@+id/EDIT"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/EDIT"
+        android:orderInCategory="0"
+        android:visible="true"
+        app:showAsAction="always|withText"
+        android:title="EDIT"/>
+    <!--<item android:id = "@+id/EDIT"
         android:orderInCategory="0"
         android:title="EDIT" />
     <item android:id = "@+id/DONE"
         android:orderInCategory="1"
-        android:title="SAVE"/>
+        android:title="SAVE"/>-->
 </menu>

@@ -4,10 +4,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.base.Constants;
 
 import java.util.ArrayList;
 
@@ -39,15 +42,30 @@ public class NotificationAdapter extends BaseAdapter{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         if(convertView== null){
             convertView = inflater.inflate(R.layout.notification_row, null);
         }
         ImageView mImageView = (ImageView)convertView.findViewById(R.id.image);
         TextView mTextView = (TextView)convertView.findViewById(R.id.label);
+        CheckBox checkBox = (CheckBox)convertView.findViewById(R.id.selected);
 
         mImageView.setImageResource(notificationMember.get(position).getImgId());
         mTextView.setText(notificationMember.get(position).getFunctionName());
+
+        checkBox.setChecked(Constants.notificationCheck[position]);
+
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                if ( isChecked )
+                {
+                    Constants.notificationCheck[position] = true;
+                }else Constants.notificationCheck[position] = false;
+
+            }
+        });
 
         return convertView;
     }

@@ -55,6 +55,8 @@ public class Constants {
     public static String[] parcel ={"onevibe", "twovibe", "threevibe", "fourvibe", "infinitevibe", "nonevibe"};
     public static boolean[] parcelPosition = {false, false, false, false, false, false};
 
+    public static boolean[] notificationCheck = {false, false, false};//phone call, text message, reminders
+
     public boolean isParcel = false;
 
     public static boolean notificationSave = false;

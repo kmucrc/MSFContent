@@ -6,10 +6,12 @@ package com.msfrc.msfcontent.notification;
 public class NotificationListData {
     private int imgId;
     private String functionName;
+    private Boolean check;
 
-    public NotificationListData(int imgId, String functionName){
+    public NotificationListData(int imgId, String functionName, boolean check){
         this.imgId= imgId;
         this.functionName = functionName;
+        this.check = check;
     }
 
     public int getImgId() {
@@ -19,4 +21,6 @@ public class NotificationListData {
     public String getFunctionName() {
         return functionName;
     }
+
+    public boolean getCheck(){ return check;}
 }

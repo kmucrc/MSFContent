@@ -48,7 +48,7 @@ public class NotificationScene extends AppCompatActivity{
     private ReminderListener mReminderListener;
     private AccountManager mAccountManager;
     private String email;
-    public static final String PREFS_NAME = "Notification";
+
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notification);
@@ -67,12 +67,13 @@ public class NotificationScene extends AppCompatActivity{
 //        mTelephonyManager = (TelephonyManager)getSystemService(getApplicationContext().TELEPHONY_SERVICE);
 //        mTelephonyManager.listen(mCallStateListner, PhoneStateListener.LISTEN_CALL_STATE);
         setCustomerActionBar();
+
     }
     public void baseScene(){
         ListView listView = null;
-        datas.add(new NotificationListData(R.drawable.phonecall, "PHONE CALL"));
-        datas.add(new NotificationListData(R.drawable.textmassage, "TEXT MESSAGE"));
-        datas.add(new NotificationListData(R.drawable.reminders, "REMINDERS"));
+        datas.add(new NotificationListData(R.drawable.phonecall, "PHONE CALL", Constants.notificationCheck[0]));
+        datas.add(new NotificationListData(R.drawable.textmassage, "TEXT MESSAGE", Constants.notificationCheck[1]));
+        datas.add(new NotificationListData(R.drawable.reminders, "REMINDERS", Constants.notificationCheck[2]));
 
         listView = (ListView)findViewById(R.id.list);
 

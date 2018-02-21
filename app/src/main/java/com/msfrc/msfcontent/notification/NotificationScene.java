@@ -48,6 +48,7 @@ public class NotificationScene extends AppCompatActivity{
     private ReminderListener mReminderListener;
     private AccountManager mAccountManager;
     private String email;
+    public static final String PREFS_NAME = "Notification";
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notification);

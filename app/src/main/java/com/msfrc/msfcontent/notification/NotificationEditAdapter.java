@@ -70,8 +70,12 @@ public class NotificationEditAdapter extends BaseAdapter{
         vibeButton.setImageResource(notificationMember.get(position).getVibeimgId());
         if(Constants.notificationSave)
         {
-            vibeButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            vibeButton.setBackgroundColor(Color.rgb(255, 174, 201));
+            if(notificationMember.get(position).getVibeimgId()==R.drawable.vibrate)
+                vibeButton.setBackgroundColor(0x4BADAC);
+            else {
+                vibeButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                vibeButton.setBackgroundColor(Color.rgb(255, 174, 201));
+            }
         }
         mTextView.setBackgroundColor(notificationMember.get(position).getBackgroundColor());
         mTextView.setTextColor(notificationMember.get(position).getTextxColor());
@@ -99,6 +103,7 @@ public class NotificationEditAdapter extends BaseAdapter{
                 yellowButton.setVisibility(View.VISIBLE);
                 whiteButton.setVisibility(View.VISIBLE);
                 greenButton.setVisibility(View.VISIBLE);
+
                 redButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -146,7 +151,7 @@ public class NotificationEditAdapter extends BaseAdapter{
                         whiteButton.setVisibility(View.INVISIBLE);
                         greenButton.setVisibility(View.INVISIBLE);
                         mTextView.setVisibility(View.VISIBLE);
-                        mTextView.setTextColor(Color.WHITE);
+                        mTextView.setTextColor(Color.BLACK);//show text color
                         mTextView.setBackgroundColor(Color.WHITE);
                         colorButton.setVisibility(View.VISIBLE);
                         Constants.redColor[position] = false;
@@ -214,6 +219,7 @@ public class NotificationEditAdapter extends BaseAdapter{
                 mTextView.setVisibility(View.INVISIBLE);
                 colorButton.setVisibility(View.INVISIBLE);
                 vibeButton.setVisibility(View.INVISIBLE);
+
                 firstVibeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -231,11 +237,9 @@ public class NotificationEditAdapter extends BaseAdapter{
                         mTextView.setVisibility(View.VISIBLE);
                         parcelArray[position] = Constants.parcel[0];
                         Constants.isParecel[position][0] = true;
-                        Constants.isParecel[position][1] = false;
-                        Constants.isParecel[position][2] = false;
-                        Constants.isParecel[position][3] = false;
-                        Constants.isParecel[position][4] = false;
-                        Constants.isParecel[position][5] = false;
+                        for(int i = 1 ; i < 6 ; i++){
+                            Constants.isParecel[position][i] = false;
+                        }
                     }
                 });
                 secondVibeButton.setOnClickListener(new View.OnClickListener() {
@@ -254,12 +258,10 @@ public class NotificationEditAdapter extends BaseAdapter{
                         colorButton.setVisibility(View.VISIBLE);
                         mTextView.setVisibility(View.VISIBLE);
                         parcelArray[position] = Constants.parcel[1];
-                        Constants.isParecel[position][0] = false;
-                        Constants.isParecel[position][1] = true;
-                        Constants.isParecel[position][2] = false;
-                        Constants.isParecel[position][3] = false;
-                        Constants.isParecel[position][4] = false;
-                        Constants.isParecel[position][5] = false;
+                        for(int i = 0 ; i < 6 ; i++){
+                            if(i==1) Constants.isParecel[position][i] = true;
+                            else  Constants.isParecel[position][i] = false;
+                        }
                     }
                 });
                 thirdVibeButton.setOnClickListener(new View.OnClickListener() {
@@ -278,12 +280,10 @@ public class NotificationEditAdapter extends BaseAdapter{
                         colorButton.setVisibility(View.VISIBLE);
                         mTextView.setVisibility(View.VISIBLE);
                         parcelArray[position] = Constants.parcel[2];
-                        Constants.isParecel[position][0] = false;
-                        Constants.isParecel[position][1] = false;
-                        Constants.isParecel[position][2] = true;
-                        Constants.isParecel[position][3] = false;
-                        Constants.isParecel[position][4] = false;
-                        Constants.isParecel[position][5] = false;
+                        for(int i = 0 ; i < 6 ; i++){
+                            if(i==2) Constants.isParecel[position][i] = true;
+                            else  Constants.isParecel[position][i] = false;
+                        }
 
                     }
                 });
@@ -303,12 +303,10 @@ public class NotificationEditAdapter extends BaseAdapter{
                         colorButton.setVisibility(View.VISIBLE);
                         mTextView.setVisibility(View.VISIBLE);
                         parcelArray[position] = Constants.parcel[3];
-                        Constants.isParecel[position][0] = false;
-                        Constants.isParecel[position][1] = false;
-                        Constants.isParecel[position][2] = false;
-                        Constants.isParecel[position][3] = true;
-                        Constants.isParecel[position][4] = false;
-                        Constants.isParecel[position][5] = false;
+                        for(int i = 0 ; i < 6 ; i++){
+                            if(i==3) Constants.isParecel[position][i] = true;
+                            else  Constants.isParecel[position][i] = false;
+                        }
                     }
                 });
                 infiniteVibeButton.setOnClickListener(new View.OnClickListener() {
@@ -327,12 +325,10 @@ public class NotificationEditAdapter extends BaseAdapter{
                         colorButton.setVisibility(View.VISIBLE);
                         mTextView.setVisibility(View.VISIBLE);
                         parcelArray[position] = Constants.parcel[4];
-                        Constants.isParecel[position][0] = false;
-                        Constants.isParecel[position][1] = false;
-                        Constants.isParecel[position][2] = false;
-                        Constants.isParecel[position][3] = false;
-                        Constants.isParecel[position][4] = true;
-                        Constants.isParecel[position][5] = false;
+                        for(int i = 0 ; i < 6 ; i++){
+                            if(i==4) Constants.isParecel[position][i] = true;
+                            else  Constants.isParecel[position][i] = false;
+                        }
                     }
                 });
                 noneVibeButton.setOnClickListener(new View.OnClickListener() {
@@ -351,11 +347,9 @@ public class NotificationEditAdapter extends BaseAdapter{
                         colorButton.setVisibility(View.VISIBLE);
                         mTextView.setVisibility(View.VISIBLE);
                         parcelArray[position] = Constants.parcel[5];
-                        Constants.isParecel[position][0] = false;
-                        Constants.isParecel[position][1] = false;
-                        Constants.isParecel[position][2] = false;
-                        Constants.isParecel[position][3] = false;
-                        Constants.isParecel[position][4] = false;
+                        for(int i = 0 ; i < 5 ; i++){
+                            Constants.isParecel[position][i] = false;
+                        }
                         Constants.isParecel[position][5] = true;
                     }
                 });

@@ -56,6 +56,7 @@ public class Constants {
     public static boolean[] parcelPosition = {false, false, false, false, false, false};
 
     public static boolean[] notificationCheck = {false, false, false};//phone call, text message, reminders
+    public static boolean[] clickCheck = {false, false, false, false, false};//music, camera, find phone, manner mode, emergency
 
     public boolean isParcel = false;
 

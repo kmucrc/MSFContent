@@ -71,6 +71,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".home.UIScene" />
         </activity>
+        <activity android:name=".click.ClickScene">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".home.UIScene" />
+        </activity>
 
 
     </application>

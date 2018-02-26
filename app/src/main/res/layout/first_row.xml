@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/clickImage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="188dp"
+            android:layout_marginLeft = "10dp"
+            android:layout_marginTop="2.5dp"
+            android:layout_marginBottom="2.5dp"/>
+        <TextView
+            android:id="@+id/oneClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:layout_marginRight="13dp"
+            android:layout_marginTop="2.5dp"
+            android:layout_marginBottom="2.5dp"
+            android:textColor="#FFFFFF"
+            android:typeface="sans"/>
+        <TextView
+            android:id="@+id/doubleClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="18dp"
+            android:layout_marginTop="2.5dp"
+            android:layout_marginBottom="2.5dp"
+            android:textSize="15dp"
+            android:textColor="#FFFFFF"
+            android:typeface="sans"/>
+        <TextView
+            android:id="@+id/hold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="2.5dp"
+            android:layout_marginBottom="2.5dp"
+            android:textColor="#FFFFFF"
+            android:textSize="15dp"
+            android:typeface="sans"/>
+</LinearLayout>

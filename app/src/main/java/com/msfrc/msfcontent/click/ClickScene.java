@@ -1,5 +1,6 @@
 package com.msfrc.msfcontent.click;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.click.music.MusicScene;
 
 import java.util.ArrayList;
 
@@ -57,14 +59,15 @@ public class ClickScene extends AppCompatActivity implements AdapterView.OnItemC
         actionBar.setCustomView(mCustomView);
         titleText = (TextView)findViewById(R.id.title);
         titleText.setText("CLICK");
+        titleText.setTextColor(Color.WHITE);
     }
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch(position){
-//            case 0:
-//                Intent musicSceneIntent = new Intent(getApplicationContext(), MusicScene.class);
-//                startActivity(musicSceneIntent);
-//                break;
+            case 0:
+                Intent musicSceneIntent = new Intent(getApplicationContext(), MusicScene.class);
+                startActivity(musicSceneIntent);
+                break;
 //            case 1:
 //                Intent cameraSceneIntent = new Intent(getApplicationContext(), CameraScene.class);
 //                startActivity(cameraSceneIntent);

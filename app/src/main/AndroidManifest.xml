@@ -76,6 +76,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".home.UIScene" />
         </activity>
+        <activity android:name=".click.music.MusicScene">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".click.ClickScene" />
+        </activity>
 
 
     </application>

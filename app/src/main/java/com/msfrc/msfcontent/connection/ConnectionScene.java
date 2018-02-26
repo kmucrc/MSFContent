@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.base.Constants;
+import com.msfrc.msfcontent.click.music.MusicSceneAdapter;
 import com.msfrc.msfcontent.home.UIScene;
 
 import java.io.IOException;
@@ -244,17 +246,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
         Log.d(TAG, "actions function called");
         if(message.equals("SingleClick")){
-//            if(Constants.musicPage){
-//                if(MusicSceneAdapter.isFirstLineSingleChecked) {
-//                    playMusic();
-//                }
-//                else if(MusicSceneAdapter.isSecondLineSingleChecked){
-//                    nextMusic();
-//                }
-//                else{
-//                    prevMusic();
-//                }
-//            }
+            if(Constants.musicPage){
+                if(MusicSceneAdapter.isFirstLineSingleChecked) {
+                    playMusic();
+                }
+                else if(MusicSceneAdapter.isSecondLineSingleChecked){
+                    nextMusic();
+                }
+                else{
+                    prevMusic();
+                }
+            }
 //            else if(Constants.clickCameraPage){
 //                if(CameraSceneAdapter.isFirstLineSingleChecked) {
 //                    captureCamera();
@@ -287,17 +289,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //            }
         }
         else if(message.equals("DoubleClick")){
-//            if(Constants.musicPage){
-//                if(MusicSceneAdapter.isFirstLineDoubleChecked){
-//                    playMusic();
-//                }
-//                else if(MusicSceneAdapter.isSecondLineDoubleChecked){
-//                    nextMusic();
-//                }
-//                else{
-//                    prevMusic();
-//                }
-//            }
+            if(Constants.musicPage){
+                if(MusicSceneAdapter.isFirstLineDoubleChecked){
+                    playMusic();
+                }
+                else if(MusicSceneAdapter.isSecondLineDoubleChecked){
+                    nextMusic();
+                }
+                else{
+                    prevMusic();
+                }
+            }
 //            else if(Constants.clickCameraPage){
 //                if(CameraSceneAdapter.isFirstLineDoubleChecked){
 //                    captureCamera();
@@ -327,17 +329,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //            }
         }
         else if(message.equals("Hold")){
-//            if(Constants.musicPage){
-//                if(MusicSceneAdapter.isFirstLineHoldChecked){
-//                    playMusic();
-//                }
-//                else if(MusicSceneAdapter.isSecondLineHoldChecked){
-//                    nextMusic();
-//                }
-//                else {
-//                    prevMusic();
-//                }
-//            }
+            if(Constants.musicPage){
+                if(MusicSceneAdapter.isFirstLineHoldChecked){
+                    playMusic();
+                }
+                else if(MusicSceneAdapter.isSecondLineHoldChecked){
+                    nextMusic();
+                }
+                else {
+                    prevMusic();
+                }
+            }
 //            else if(Constants.clickCameraPage){
 //                if(CameraSceneAdapter.isFirstLineHoldChecked){
 //                    captureCamera();
@@ -376,8 +378,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
     //음악 플레이어 시작
     public void startMusicPlayer() {
-//        Intent musicPlayerStartIntent = new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER);
-//        startActivity(musicPlayerStartIntent);
+        Intent musicPlayerStartIntent = new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER);
+        startActivity(musicPlayerStartIntent);
     }
 
     public void playMusic() {

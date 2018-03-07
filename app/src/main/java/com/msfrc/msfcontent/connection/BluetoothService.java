@@ -1,10 +1,11 @@
 package com.msfrc.msfcontent.connection;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,11 +18,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-/**
- * Created by kmuvcl_laptop_dell on 2016-07-06.
- */
+
 public class BluetoothService {
     private static final String TAG = "BluetoothChatService";
+
+    private static final int REQUEST_CONNECT_DEVICE =2;
+//    private static final int REQUEST_ENABLE_BT = 2;
 
     // Name for the SDP record when creating server socket
     private static final String NAME_SECURE = "BluetoothChatSecure";
@@ -29,9 +31,9 @@ public class BluetoothService {
 
     // Unique UUID for this application
     private static final UUID MY_UUID_SECURE =
-            UUID.fromString("00000003-0000-1000-8000-00805F9B34FB");
+            UUID.fromString("0000de10-0000-1000-8000-00805f9b34fb");//"00000003-0000-1000-8000-00805F9B34FB");//);"00002902-0000-1000-8000-00805f9b34fb"
     private static final UUID MY_UUID_INSECURE =
-            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");//);"00002a37-0000-1000-8000-00805f9b34fb"
 
     // Member fields
     private final BluetoothAdapter mAdapter;
@@ -47,17 +49,19 @@ public class BluetoothService {
     public static final int STATE_LISTEN = 1;     // now listening for incoming connections
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+    private static final int REQUEST_ENABLE_BT = 4;
 
-    /**
-     * Constructor. Prepares a new BluetoothChat session.
-     *
-     * @param context The UI Activity Context
-     * @param handler A Handler to send messages back to the UI Activity
-     */
-    public BluetoothService(Context context, Handler handler) {
+    private BluetoothAdapter btAdapter;
+    private Activity mActivity;
+
+    public BluetoothService(Activity ac, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mHandler = handler;
+
+        //change activity
+        mActivity = ac;
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     /**
@@ -72,12 +76,52 @@ public class BluetoothService {
         // Give the new state to the Handler so the UI Activity can update
         mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
     }
+    public boolean getDeviceState() {
+        if(btAdapter == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     /**
      * Return the current connection state.
      */
     public synchronized int getState() {
         return mState;
+    }
+
+
+    public void enableBluetooth() {
+        Log.i(TAG, "Check the enabled Bluetooth");
+        if(btAdapter.isEnabled()) {
+            // 기기의 블루투스 상태가 On인 경우
+            Log.d(TAG, "Bluetooth Enable Now");
+            scanDevice();
+        } else {
+            // 기기의 블루투스 상태가 Off인 경우
+            Log.d(TAG, "Bluetooth Enable Request");
+            Intent i = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            mActivity.startActivityForResult(i, REQUEST_ENABLE_BT);
+        }
+    }
+    public void scanDevice() {
+        Log.d(TAG, "Scan Device");
+
+        Intent serverIntent = new Intent(mActivity, DeviceListActivity.class);
+        mActivity.startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+    }
+
+    public void getDeviceInfo(Intent data, boolean secure) {
+        // Get the device MAC address
+        String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+//        String name = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_NAME);
+        // Get the BluetoothDevice object
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);
+
+        Log.d(TAG, "Get Device Info \n" + "address : " + address);
+
+        connect(device, secure);
     }
 
     /**
@@ -112,12 +156,7 @@ public class BluetoothService {
         }
     }
 
-    /**
-     * Start the ConnectThread to initiate a connection to a remote device.
-     *
-     * @param device The BluetoothDevice to connect
-     * @param secure Socket Security type - Secure (true) , Insecure (false)
-     */
+    // ConnectThread 초기화 device의 모든 연결 제거
     public synchronized void connect(BluetoothDevice device, boolean secure) {
         Log.d(TAG, "connect to: " + device);
 
@@ -141,12 +180,7 @@ public class BluetoothService {
         setState(STATE_CONNECTING);
     }
 
-    /**
-     * Start the ConnectedThread to begin managing a Bluetooth connection
-     *
-     * @param socket The BluetoothSocket on which the connection was made
-     * @param device The BluetoothDevice that has been connected
-     */
+    // ConnectedThread 초기화
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice
             device, final String socketType) {
         Log.d(TAG, "connected, Socket Type:" + socketType);
@@ -232,26 +266,24 @@ public class BluetoothService {
         r.write(out);
     }
 
-    /**
-     * Indicate that the connection attempt failed and notify the UI Activity.
-     */
+    //연결실패
     private void connectionFailed() {
         // Send a failure message back to the Activity
         Bundle bundle = new Bundle();
-
         // Start the service over to restart listening mode
         BluetoothService.this.start();
+
+        setState(STATE_LISTEN);
     }
 
-    /**
-     * Indicate that the connection was lost and notify the UI Activity.
-     */
+    //연결을 잃었을 때
     private void connectionLost() {
         // Send a failure message back to the Activity
         Bundle bundle = new Bundle();
-
         // Start the service over to restart listening mode
         BluetoothService.this.start();
+
+        setState(STATE_LISTEN);
     }
 
     /**

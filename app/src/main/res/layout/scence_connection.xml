@@ -25,6 +25,20 @@
         android:src="@drawable/zipper" />
 
     <Button
+        android:id="@+id/startButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/zipperImage"
+        android:layout_marginTop="35dp"
+        android:layout_centerHorizontal="true"
+        android:background="@color/mainColor"
+        android:onClick="onStartButtonClicked"
+        android:text="Start >>"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:visibility="invisible"/>
+
+    <Button
         android:id="@+id/testButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,7 +46,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="35dp"
         android:background="@color/colorButton"
-        android:onClick="onTestButtondClicked"
+        android:onClick="onTestButtonClicked"
         android:text="test"
         android:textColor="#FFFFFF"
         android:textSize="30sp" />

@@ -24,10 +24,6 @@ import com.msfrc.msfcontent.preference.PreferenceScene;
 
 import java.util.ArrayList;
 
-//import com.msfrc.msfcontent.click.ClickScene;
-//import com.msfrc.msfcontent.contacts.ContactScene;
-//import com.msfrc.msfcontent.notification.NotificationScene;
-
 /**
  * Created by kmuvcl_laptop_dell on 2016-07-19.
  */

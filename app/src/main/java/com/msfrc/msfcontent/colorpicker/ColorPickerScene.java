@@ -13,7 +13,6 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
-import com.msfrc.msfcontent.connection.ConnectionScene;
 
 /**
  * Created by kmuvcl_laptop_dell on 2016-07-26.
@@ -31,13 +30,16 @@ public class ColorPickerScene extends AppCompatActivity{
         GridView mGridView = (GridView)ColorList.getColorPicker(getApplicationContext());
         setContentView(mGridView);
         //new ColorPicker(mActivity, ColorPickerScene.this, Color.WHITE).show();
+//        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11ff00ff");//보내는 데이터 형식은 8자리16진
         setCustomerActionBar();
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Get the pickedColor from AdapterView
                 mPickedColor = (int) parent.getItemAtPosition(position);
-                ConnectionScene.mBluetoothService.write(Integer.toHexString(mPickedColor).getBytes());
+//                Toast.makeText(getApplicationContext(), String.valueOf(mPickedColor), Toast.LENGTH_SHORT).show();
+//                Log.w("ColorPickerScene", String.valueOf(mPickedColor));
+
             }
         });
     }

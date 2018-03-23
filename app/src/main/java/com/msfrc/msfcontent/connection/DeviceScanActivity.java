@@ -1,10 +1,8 @@
-package com.msfrc.msfcontent.bluetoothle;
+package com.msfrc.msfcontent.connection;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -25,7 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.msfrc.msfcontent.R;
-import com.msfrc.msfcontent.connection.ConnectionScene;
 
 import java.util.ArrayList;
 
@@ -64,9 +61,10 @@ public class DeviceScanActivity extends AppCompatActivity{
 
         // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
         // BluetoothAdapter through BluetoothManager.
-        final BluetoothManager bluetoothManager =
-                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        mBluetoothAdapter = bluetoothManager.getAdapter();
+//        final BluetoothManager bluetoothManager =
+//                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+//        mBluetoothAdapter = bluetoothManager.getAdapter();
+        mBluetoothAdapter = ConnectionScene.mBluetoothAdapter;
 
         // Checks if Bluetooth is supported on the device.
         if (mBluetoothAdapter == null) {

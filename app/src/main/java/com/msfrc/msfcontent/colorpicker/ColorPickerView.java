@@ -19,8 +19,8 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
-import com.msfrc.msfcontent.connection.BluetoothService;
 import com.msfrc.msfcontent.connection.ConnectionScene;
 
 /**
@@ -66,7 +66,7 @@ public class ColorPickerView extends View{
 
         private Matrix gradientRotationMatrix;
 
-        BluetoothService mBluetoothService = ConnectionScene.mBluetoothService;
+//        BluetoothService mBluetoothService = ConnectionScene.mBluetoothService;
 
         /** Currently selected color */
         private float[] colorHSV = new float[] { 0f, 0f, 1f };
@@ -304,7 +304,20 @@ public class ColorPickerView extends View{
 
                         invalidate();
                     }
-                    ConnectionScene.mBluetoothService.write(Integer.toHexString(Color.HSVToColor(colorHSV)).getBytes());
+                    Toast.makeText(getContext(), Integer.toHexString(Color.HSVToColor(colorHSV)), Toast.LENGTH_SHORT).show();
+//                    ConnectionScene.writeColor(Integer.toHexString(Color.HSVToColor(colorHSV)).getBytes());
+//                    ConnectionScene.mBluetoothService.write(Integer.toHexString(Color.HSVToColor(colorHSV)).getBytes());
+//                    long c = Integer.parseInt("ffffffff",16)-Integer.parseInt(Integer.toHexString(Color.HSVToColor(colorHSV)));
+//                    String co = "11"+ Integer.toHexString((int)c);
+                    String chooseColor = Integer.toHexString(Color.HSVToColor(colorHSV));
+                    String co = "11";
+                    for(int i=2; i<8;i++){
+                        int a = 0xf - Integer.parseInt(String.valueOf(chooseColor.charAt(i)),16);
+                        co+=Integer.toHexString(a);
+                    }
+                    if(ConnectionScene.mConnected)
+                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic(co);
+//                    else Toast.makeText(getContext(), "블루투스가 연결되지 않았습니다.", Toast.LENGTH_SHORT).show();
                     return true;
             }
             return super.onTouchEvent(event);

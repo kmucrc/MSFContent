@@ -25,7 +25,6 @@ import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.base.Constants;
-import com.msfrc.msfcontent.connection.ConnectionScene;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -152,18 +151,18 @@ public class NotificationScene extends AppCompatActivity{
             super.onCallStateChanged(state, incomingNumber);
             switch(state){
                 case TelephonyManager.CALL_STATE_RINGING:
-                    if(Constants.redColor[0])
-                        ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
-                    else if(Constants.blueColor[0])
-                        ConnectionScene.mBluetoothService.write("099EFF".getBytes());
-                    else if(Constants.greenColor[0])
-                        ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
-                    else if(Constants.yelloColor[0])
-                        ConnectionScene.mBluetoothService.write("FFD966".getBytes());
-                    else if(Constants.whiteColor[0])
-                        ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
+                    if(Constants.redColor[0]);
+//                        ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
+                    else if(Constants.blueColor[0]);
+//                        ConnectionScene.mBluetoothService.write("099EFF".getBytes());
+                    else if(Constants.greenColor[0]);
+//                        ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
+                    else if(Constants.yelloColor[0]);
+//                        ConnectionScene.mBluetoothService.write("FFD966".getBytes());
+                    else if(Constants.whiteColor[0]);
+//                        ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
                     for(int i=0; i<=8; i++) {
-                        ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[0].getBytes());
+//                        ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[0].getBytes());
                     }
                     break;
             }
@@ -175,19 +174,19 @@ public class NotificationScene extends AppCompatActivity{
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals(action)){
-                if(Constants.redColor[1])
-                    ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
-                else if(Constants.blueColor[1])
-                    ConnectionScene.mBluetoothService.write("099EFF".getBytes());
-                else if(Constants.greenColor[1])
-                    ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
-                else if(Constants.yelloColor[1])
-                    ConnectionScene.mBluetoothService.write("FFD966".getBytes());
-                else if(Constants.whiteColor[1])
-                    ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
+                if(Constants.redColor[1]);
+//                    ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
+                else if(Constants.blueColor[1]);
+//                    ConnectionScene.mBluetoothService.write("099EFF".getBytes());
+                else if(Constants.greenColor[1]);
+//                    ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
+                else if(Constants.yelloColor[1]);
+//                    ConnectionScene.mBluetoothService.write("FFD966".getBytes());
+                else if(Constants.whiteColor[1]);
+//                    ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
 
                 for(int i=0; i<=8; i++) {
-                    ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[1].toString().getBytes());
+//                    ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[1].toString().getBytes());
                 }
             }
         }
@@ -198,19 +197,19 @@ public class NotificationScene extends AppCompatActivity{
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals(reminderAction)){
-                if(Constants.redColor[2])
-                    ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
-                else if(Constants.blueColor[2])
-                    ConnectionScene.mBluetoothService.write("099EFF".getBytes());
-                else if(Constants.greenColor[2])
-                    ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
-                else if(Constants.yelloColor[2])
-                    ConnectionScene.mBluetoothService.write("FFD966".getBytes());
-                else if(Constants.whiteColor[2])
-                    ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
+                if(Constants.redColor[2]);
+//                    ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
+                else if(Constants.blueColor[2]);
+//                    ConnectionScene.mBluetoothService.write("099EFF".getBytes());
+                else if(Constants.greenColor[2]);
+//                    ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
+                else if(Constants.yelloColor[2]);
+//                    ConnectionScene.mBluetoothService.write("FFD966".getBytes());
+                else if(Constants.whiteColor[2]);
+//                    ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
 
                 for(int i=0; i<=8; i++) {
-                    ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[2].toString().getBytes());
+//                    ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[2].toString().getBytes());
                 }
             }
         }

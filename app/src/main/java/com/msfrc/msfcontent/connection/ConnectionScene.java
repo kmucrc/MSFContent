@@ -1,7 +1,6 @@
 package com.msfrc.msfcontent.connection;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -21,9 +20,7 @@ import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -40,7 +37,6 @@ import android.widget.Toast;
 
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.base.Constants;
-import com.msfrc.msfcontent.bluetoothle.DeviceScanActivity;
 import com.msfrc.msfcontent.click.music.MusicSceneAdapter;
 import com.msfrc.msfcontent.home.UIScene;
 
@@ -56,8 +52,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     Button start;
 
     //Bluetooth
-    private BluetoothAdapter mBluetoothAdapter;
-    public static BluetoothService mBluetoothService;
+    static BluetoothAdapter mBluetoothAdapter;
     private boolean isPlaying = false;
     private String mConnectedDeviceName = null;
 
@@ -75,10 +70,10 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     //ble
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
-    private String device_address;
+    public static String device_address;
     private String device_name;
-    private BluetoothLeService mBluetoothLeService;
-    private boolean mConnected = false;
+    public static BluetoothLeService mBluetoothLeService;
+    public static boolean mConnected = false;
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -96,19 +91,34 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             mBluetoothLeService = null;
-            start.setVisibility(View.INVISIBLE);
+           // start.setVisibility(View.INVISIBLE);
         }
     };
+    public static String mdata;
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 mConnected = true;
-//                updateConnectionState(R.string.connected);
+//                updateConnectionState(R.string.connected); //아래줄
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mConnected = true;
+                        connectDevice();
+                        start.setVisibility(View.VISIBLE);
+                    }
+                });
                 invalidateOptionsMenu();
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        start.setVisibility(View.INVISIBLE);
+                    }
+                });
 //                updateConnectionState(R.string.disconnected);
                 invalidateOptionsMenu();
 //                clearUI();
@@ -116,11 +126,12 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                 // Show all the supported services and characteristics on the user interface.
 //                displayGattServices(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                //데이터 읽어서 뿌리는 부분
+                mdata = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
 //                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
         }
     };
-
 
     private int cameraId;
 
@@ -234,6 +245,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //                setScene();
 //            }
 //        }else{ finish();}
+        if(mBluetoothLeService!=null)
+            mBluetoothLeService.disconnect();
         if(event.getActionMasked()==MotionEvent.ACTION_DOWN){
             Log.d(TAG, "Scan Device");
             setScene();
@@ -261,11 +274,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         device_name = data.getExtras().getString(EXTRAS_DEVICE_NAME);
         device_address = data.getExtras().getString(EXTRAS_DEVICE_ADDRESS);
         Log.d(TAG, device_name);
-        mBluetoothLeService.connect(device_address);
-        Log.d(TAG, "Connect finish");
-        //add UI scene
-        Intent uiHomeIntent = new Intent(getApplicationContext(), UIScene.class);
-        startActivity(uiHomeIntent);
+        if(mConnected){
+            mBluetoothLeService.connect(device_address);
+            Log.d(TAG, "Connect finish");
+            mConnected = true;
+            //add UI scene
+            Intent uiHomeIntent = new Intent(getApplicationContext(), UIScene.class);
+            startActivity(uiHomeIntent);
+        }else{
+            Toast.makeText(this, "블루투스가 연결되지 않았습니다.",Toast.LENGTH_SHORT).show();
+        }
+
 //        if(mBluetoothLeService.connect(device_address)){
 //            Log.d(TAG, "Connect finish");
 //            //add UI scene
@@ -305,62 +324,58 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    public final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case BluetoothService.STATE_CONNECTED:
-                            Log.d(TAG, "STATE CONNECTED");
-                            Intent uiSceneIntent = new Intent(getApplicationContext(), UIScene.class);
-                            startActivity(uiSceneIntent);
-                            break;
-                    }
-                    break;
-                case Constants.MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    Log.d(TAG, writeMessage);
-                    break;
-                case Constants.MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    Log.d(TAG, readMessage);
-                    try {
-                        actions(readMessage);
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                    //Toast.makeText(getApplicationContext(), readMessage, Toast.LENGTH_SHORT).show();
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    Log.d(TAG, "checkcheck");
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (null != this) {
-                        Toast.makeText(getApplicationContext(), "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    }
-                    if (mBluetoothService.getState() == mBluetoothService.STATE_CONNECTED) {
-                        Intent uiHomeIntent = new Intent(getApplicationContext(), UIScene.class);
-                        startActivity(uiHomeIntent);
-                    }
-                    break;
-            }
-        }
-    };
+//    @SuppressLint("HandlerLeak")
+//    public final Handler mHandler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            switch (msg.what) {
+//                case Constants.MESSAGE_STATE_CHANGE:
+//                    switch (msg.arg1) {
+//                        case BluetoothLeService.STATE_CONNECTED:
+//                            Log.d(TAG, "STATE CONNECTED");
+//                            Intent uiSceneIntent = new Intent(getApplicationContext(), UIScene.class);
+//                            startActivity(uiSceneIntent);
+//                            break;
+//                    }
+//                    break;
+//                case Constants.MESSAGE_WRITE:
+//                    byte[] writeBuf = (byte[]) msg.obj;
+//                    // construct a string from the buffer
+//                    String writeMessage = new String(writeBuf);
+//                    Log.d(TAG, writeMessage);
+//                    break;
+//                case Constants.MESSAGE_READ:
+//                    byte[] readBuf = (byte[]) msg.obj;
+//                    // construct a string from the valid bytes in the buffer
+//                    String readMessage = new String(readBuf, 0, msg.arg1);
+//                    Log.d(TAG, readMessage);
+//                    try {
+//                        actions(readMessage);
+//                    } catch (ClassNotFoundException e) {
+//                        e.printStackTrace();
+//                    } catch (NoSuchMethodException e) {
+//                        e.printStackTrace();
+//                    } catch (RemoteException e) {
+//                        e.printStackTrace();
+//                    } catch (IllegalAccessException e) {
+//                        e.printStackTrace();
+//                    } catch (InvocationTargetException e) {
+//                        e.printStackTrace();
+//                    }
+//                    //Toast.makeText(getApplicationContext(), readMessage, Toast.LENGTH_SHORT).show();
+//                    break;
+//                case Constants.MESSAGE_DEVICE_NAME:
+//                    // save the connected device's name
+//                    Log.d(TAG, "checkcheck");
+//                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+//                    if (null != this) {
+//                        Toast.makeText(getApplicationContext(), "Connected to "
+//                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+//                    }
+//                    break;
+//            }
+//        }
+//    };
 
     public void actions(String message) throws ClassNotFoundException, NoSuchMethodException, RemoteException, IllegalAccessException, InvocationTargetException {
 
@@ -704,6 +719,11 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             Log.d(TAG, "Connect request result=" + result);
         }
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mGattUpdateReceiver);
+    }
     private static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
@@ -712,4 +732,5 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
         return intentFilter;
     }
+
 }

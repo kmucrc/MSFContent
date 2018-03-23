@@ -42,7 +42,6 @@
                 android:value=".home.UIScene"/>
         </activity>
         <activity android:name=".home.UIScene"/>
-        <activity android:name=".connection.DeviceListActivity"/>
         <activity android:name=".base.MainActivity" />
         <activity android:name=".notification.NotificationScene">
             <meta-data
@@ -85,7 +84,7 @@
                 android:value=".click.ClickScene" />
         </activity>
 
-        <activity android:name=".bluetoothle.DeviceScanActivity"/>
+        <activity android:name=".connection.DeviceScanActivity"/>
         <service android:name=".connection.BluetoothLeService" android:enabled="true"/>
 
 

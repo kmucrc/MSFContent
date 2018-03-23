@@ -21,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.msfrc.msfcontent.base.Constants;
 import com.msfrc.msfcontent.connection.ConnectionScene;
 
 /**
@@ -315,8 +316,10 @@ public class ColorPickerView extends View{
                         int a = 0xf - Integer.parseInt(String.valueOf(chooseColor.charAt(i)),16);
                         co+=Integer.toHexString(a);
                     }
-                    if(ConnectionScene.mConnected)
+                    if(ConnectionScene.mConnected) {
                         ConnectionScene.mBluetoothLeService.writeColorCharacteristic(co);
+                        Constants.basicColor = "#"+chooseColor;
+                    }
 //                    else Toast.makeText(getContext(), "블루투스가 연결되지 않았습니다.", Toast.LENGTH_SHORT).show();
                     return true;
             }

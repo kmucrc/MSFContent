@@ -274,8 +274,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         device_name = data.getExtras().getString(EXTRAS_DEVICE_NAME);
         device_address = data.getExtras().getString(EXTRAS_DEVICE_ADDRESS);
         Log.d(TAG, device_name);
+        mBluetoothLeService.connect(device_address);
         if(mConnected){
-            mBluetoothLeService.connect(device_address);
             Log.d(TAG, "Connect finish");
             mConnected = true;
             //add UI scene
@@ -707,7 +707,10 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(mServiceConnection);
+        if(mBluetoothLeService!=null) {
+            mBluetoothLeService.disconnect();
+            unbindService(mServiceConnection);
+        }
         mBluetoothLeService = null;
     }
     @Override

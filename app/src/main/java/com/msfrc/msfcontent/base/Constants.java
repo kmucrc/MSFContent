@@ -60,6 +60,8 @@ public class Constants {
 
     public boolean isParcel = false;
 
+    public static String basicColor = "#ff4BADAC";
+
     public static boolean notificationSave = false;
     public static boolean[][] isParecel = {{false, false, false, false, false, false}, {false, false, false, false, false, false}, {false, false, false, false, false, false}};
 }

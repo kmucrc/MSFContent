@@ -3,8 +3,7 @@
     package="com.msfrc.msfcontent">
 
     <!--BLE-->
-    <uses-feature android:name="android.hardware.bluetooth_le"
-        android:required="true"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <uses-permission android:name="android.permission.BLUETOOTH"/>
@@ -13,11 +12,14 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
 
     <!-- notification-->
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+
+    <!-- Click-->
+    <uses-permission android:name="android.permission.VIBRATE"/><!--MannerMode-->
+    <uses-permission android:name="android.permission.SEND_SMS"/><!--emergencyMode-->
 
 
     <application
@@ -79,6 +81,16 @@
                 android:value=".home.UIScene" />
         </activity>
         <activity android:name=".click.music.MusicScene">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".click.ClickScene" />
+        </activity>
+        <activity android:name=".click.emergency.EmergencyScene">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".click.ClickScene" />
+        </activity>
+        <activity android:name=".click.mannermode.MannerModeScene">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".click.ClickScene" />

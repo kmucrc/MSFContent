@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.base.Constants;
+import com.msfrc.msfcontent.click.emergency.EmergencySceneAdapter;
 import com.msfrc.msfcontent.click.mannermode.MannerModeSceneAdapter;
 import com.msfrc.msfcontent.click.music.MusicSceneAdapter;
 import com.msfrc.msfcontent.home.UIScene;
@@ -393,11 +394,11 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //                    selfieCamera();
 //                }
 //            }
-//            else if(Constants.emergencyPage){
-//                if(EmergencySceneAdapter.isFirstLineSingleChecked) {
-//                    sendSMS();
-//                }
-//            }
+            else if(Constants.emergencyPage){
+                if(EmergencySceneAdapter.isFirstLineSingleChecked) {
+                    sendSMS();
+                }
+            }
             else if(Constants.mannermodePage){
                 if(MannerModeSceneAdapter.isFirstLineSingleChecked) {
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
@@ -436,11 +437,11 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //                    selfieCamera();
 //                }
 //            }
-//            else if(Constants.emergencyPage){
-//                if(EmergencySceneAdapter.isFirstLineDoubleChecked){
-//                    sendSMS();
-//                }
-//            }
+            else if(Constants.emergencyPage){
+                if(EmergencySceneAdapter.isFirstLineDoubleChecked){
+                    sendSMS();
+                }
+            }
             else if(Constants.mannermodePage){
                 if(MannerModeSceneAdapter.isFirstLineDoubleChecked) {
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
@@ -476,11 +477,11 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //                    selfieCamera();
 //                }
 //            }
-//            else if(Constants.emergencyPage){
-//                if(EmergencySceneAdapter.isFirstLineHoldChecked){
-//                    sendSMS();
-//                }
-//            }
+            else if(Constants.emergencyPage){
+                if(EmergencySceneAdapter.isFirstLineHoldChecked){
+                    sendSMS();
+                }
+            }
             else if(Constants.mannermodePage){
                 if(MannerModeSceneAdapter.isFirstLineHoldChecked){
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
@@ -605,7 +606,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
     public void sendSMS() {
         Log.d(TAG, "Send SMS");
-        String phoneNumber = "01055201059";
+        String phoneNumber = "01055201059";//사용자 휴대폰 번호
         String message = "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude;
 
         SmsManager smsManager = SmsManager.getDefault();

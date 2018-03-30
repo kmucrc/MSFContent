@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.click.mannermode.MannerModeScene;
 import com.msfrc.msfcontent.click.music.MusicScene;
 
 import java.util.ArrayList;
@@ -76,10 +77,10 @@ public class ClickScene extends AppCompatActivity implements AdapterView.OnItemC
 //                Intent emergencySceneIntent = new Intent(getApplicationContext(), EmergencyScene.class);
 //                startActivity(emergencySceneIntent);
 //                break;
-//            case 3:
-//                Intent mannerModeIntent = new Intent(getApplicationContext(), MannerModeScene.class);
-//                startActivity(mannerModeIntent);
-//                break;
+            case 3:
+                Intent mannerModeIntent = new Intent(getApplicationContext(), MannerModeScene.class);
+                startActivity(mannerModeIntent);
+                break;
 //            case 4:
 //                Intent findPhoneIntent = new Intent(getApplicationContext(), FindPhoneScene.class);
 //                startActivity(findPhoneIntent);

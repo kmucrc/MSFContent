@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.base.Constants;
+import com.msfrc.msfcontent.click.mannermode.MannerModeSceneAdapter;
 import com.msfrc.msfcontent.click.music.MusicSceneAdapter;
 import com.msfrc.msfcontent.home.UIScene;
 
@@ -240,11 +241,6 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-//        if(mBluetoothService.getDeviceState()) {
-//            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//                setScene();
-//            }
-//        }else{ finish();}
         if(mBluetoothLeService!=null)
             mBluetoothLeService.disconnect();
         if(event.getActionMasked()==MotionEvent.ACTION_DOWN){
@@ -260,12 +256,6 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         Intent i = new Intent(getApplicationContext(), DeviceScanActivity.class);
         startActivityForResult(i, Constants.REQUEST_CONNECT_DEVICE);
 
-        //bt 연결알림
-//        mBluetoothService.enableBluetooth();
-//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//        mBluetoothService = new BluetoothService(this, mHandler);
-//        Intent connectionSceneIntent = new Intent(getApplicationContext(), DeviceListActivity.class);
-//        startActivityForResult(connectionSceneIntent, Constants.REQUEST_CONNECT_DEVICE);
     }
 
     Intent data;
@@ -408,17 +398,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //                    sendSMS();
 //                }
 //            }
-//            else if(Constants.mannermodePage){
-//                if(MannerModeSceneAdapter.isFirstLineSingleChecked) {
-//                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-//                }
-//                else if(MannerModeSceneAdapter.isSecondLineSingleChecked){
-//                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-//                }
-//                else{
-//                    rejectCall();
-//                }
-//            }
+            else if(Constants.mannermodePage){
+                if(MannerModeSceneAdapter.isFirstLineSingleChecked) {
+                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                }
+                else if(MannerModeSceneAdapter.isSecondLineSingleChecked){
+                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                }
+                else{
+                    rejectCall();
+                }
+            }
 //            else if(Constants.findPhonePage){
 //                findPhone();
 //            }
@@ -451,17 +441,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //                    sendSMS();
 //                }
 //            }
-//            else if(Constants.mannermodePage){
-//                if(MannerModeSceneAdapter.isFirstLineDoubleChecked) {
-//                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-//                }
-//                else if(MannerModeSceneAdapter.isSecondLineDoubleChecked){
-//                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-//                }
-//                else{
-//                    rejectCall();
-//                }
-//            }
+            else if(Constants.mannermodePage){
+                if(MannerModeSceneAdapter.isFirstLineDoubleChecked) {
+                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                }
+                else if(MannerModeSceneAdapter.isSecondLineDoubleChecked){
+                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                }
+                else{
+                    rejectCall();
+                }
+            }
         }
         else if(message.equals("Hold")){
             if(Constants.musicPage){
@@ -491,17 +481,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //                    sendSMS();
 //                }
 //            }
-//            else if(Constants.mannermodePage){
-//                if(MannerModeSceneAdapter.isFirstLineHoldChecked){
-//                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-//                }
-//                else if(MannerModeSceneAdapter.isSecondLineHoldChecked){
-//                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-//                }
-//                else {
-//                    rejectCall();
-//                }
-//            }
+            else if(Constants.mannermodePage){
+                if(MannerModeSceneAdapter.isFirstLineHoldChecked){
+                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                }
+                else if(MannerModeSceneAdapter.isSecondLineHoldChecked){
+                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                }
+                else {
+                    rejectCall();
+                }
+            }
         }
         else if(message.equals("MusicPlayer")){
             startMusicPlayer();

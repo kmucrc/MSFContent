@@ -107,6 +107,7 @@ public class UIScene extends AppCompatActivity implements AdapterView.OnItemClic
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ConnectionScene.mBluetoothLeService.disconnect();
+//        if(ConnectionScene.mBluetoothLeService!=null)
+//            ConnectionScene.mBluetoothLeService.disconnect();
     }
 }

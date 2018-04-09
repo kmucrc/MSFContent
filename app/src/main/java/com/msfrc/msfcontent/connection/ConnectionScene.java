@@ -410,9 +410,9 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                     rejectCall();
                 }
             }
-//            else if(Constants.findPhonePage){
-//                findPhone();
-//            }
+            else if(Constants.findPhonePage){
+                findPhone();
+            }
         }
         else if(message.equals("DoubleClick")){
             if(Constants.musicPage){

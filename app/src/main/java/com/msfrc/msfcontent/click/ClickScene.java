@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.click.emergency.EmergencyScene;
+import com.msfrc.msfcontent.click.findphone.FindPhoneScene;
 import com.msfrc.msfcontent.click.mannermode.MannerModeScene;
 import com.msfrc.msfcontent.click.music.MusicScene;
 
@@ -82,10 +83,10 @@ public class ClickScene extends AppCompatActivity implements AdapterView.OnItemC
                 Intent mannerModeIntent = new Intent(getApplicationContext(), MannerModeScene.class);
                 startActivity(mannerModeIntent);
                 break;
-//            case 4:
-//                Intent findPhoneIntent = new Intent(getApplicationContext(), FindPhoneScene.class);
-//                startActivity(findPhoneIntent);
-//                break;
+            case 4:
+                Intent findPhoneIntent = new Intent(getApplicationContext(), FindPhoneScene.class);
+                startActivity(findPhoneIntent);
+                break;
         }
     }
     public boolean onOptionsItemSelected(MenuItem item) {

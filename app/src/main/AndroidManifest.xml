@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.msfrc.msfcontent">
 
     <!--BLE-->
@@ -18,6 +19,11 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
     <!-- Click-->
+    <uses-permission android:name="android.permission.INJECT_EVENTS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.ACCESS_SUPERUSER"/>
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.VIBRATE"/><!--MannerMode-->
     <uses-permission android:name="android.permission.SEND_SMS"/><!--emergencyMode-->
 
@@ -95,7 +101,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".click.ClickScene" />
         </activity>
-
+        <activity android:name=".click.findphone.FindPhoneScene">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".click.ClickScene" />
+        </activity>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" /><!--뭐지-->
         <activity android:name=".connection.DeviceScanActivity"/>
         <service android:name=".connection.BluetoothLeService" android:enabled="true"/>
 

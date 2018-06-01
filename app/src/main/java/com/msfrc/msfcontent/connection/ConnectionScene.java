@@ -21,7 +21,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -43,19 +42,18 @@ import com.msfrc.msfcontent.click.music.MusicSceneAdapter;
 import com.msfrc.msfcontent.home.UIScene;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class ConnectionScene extends AppCompatActivity implements LocationListener{
 
     Uri myPicture = null;
     private static final String TAG = "ConnectionScene";
-    AudioManager mAudioManager;
-    Button start;
+    public static AudioManager mAudioManager;
+    public static Button start;
 
     //Bluetooth
     static BluetoothAdapter mBluetoothAdapter;
-    private boolean isPlaying = false;
+    public static boolean isPlaying = false;
     private String mConnectedDeviceName = null;
 
     private boolean isGpsEnabled;
@@ -65,15 +63,15 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     private LocationManager mLocationManager;
     private String mProvider;
     private Location location;
-    private double latitude;
-    private double longitude;
-    private double altitude;
+    public static double latitude;
+    public static double longitude;
+    public static double altitude;
 
     //ble
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
     public static String device_address;
-    private String device_name;
+    public static String device_name;
     public static BluetoothLeService mBluetoothLeService;
     public static boolean mConnected = false;
     // Code to manage Service lifecycle.
@@ -89,21 +87,18 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             // Automatically connects to the device upon successful start-up initialization.
             mBluetoothLeService.connect(device_address);
         }
-
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             mBluetoothLeService = null;
-           // start.setVisibility(View.INVISIBLE);
         }
     };
-    public static String mdata;
-    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+    public String mdata="";
+    public final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 mConnected = true;
-//                updateConnectionState(R.string.connected); //아래줄
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -112,7 +107,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                         start.setVisibility(View.VISIBLE);
                     }
                 });
-                invalidateOptionsMenu();
+//                invalidateOptionsMenu();
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
                 runOnUiThread(new Runnable() {
@@ -121,12 +116,11 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                         start.setVisibility(View.INVISIBLE);
                     }
                 });
-//                updateConnectionState(R.string.disconnected);
-                invalidateOptionsMenu();
-//                clearUI();
+//                invalidateOptionsMenu();
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
 //                displayGattServices(mBluetoothLeService.getSupportedGattServices());
+                Log.d("ConnectionScene", "Click?");
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 //데이터 읽어서 뿌리는 부분
                 mdata = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
@@ -139,17 +133,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
     //Find phone
     private Spinner mSminner;
-    MediaPlayer mAudio = null;
-    boolean isAudioPlay = false;
-    int streamType = AudioManager.STREAM_RING;
+    public static MediaPlayer mAudio = null;
+    public static boolean isAudioPlay = false;
+    public static int streamType = AudioManager.STREAM_RING;
 
 //    private GoogleApiClient client;
-
-    public ConnectionScene(){}
+    public static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = getApplicationContext();
         setContentView(R.layout.scence_connection);
 
         getSupportActionBar().hide();
@@ -159,7 +153,10 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         mProvider = mLocationManager.getBestProvider(criteria, false);
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 1);
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE
+                , Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH
+                , Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
 //        if(isGpsEnabled) {
 //            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -186,10 +183,6 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             }
             onLocationChanged(location);
         }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
-//        }//error원인!!!
-
         //BLE지원여부
         if(!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)){
             Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
@@ -202,13 +195,12 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             finish();
             return;
         }
-
         //bluetooth활성화
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, 2);
+            mBluetoothAdapter = bluetoothManager.getAdapter();
         }
-
     }
     //ble scanner문제해결
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 456;
@@ -259,9 +251,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
     }
 
-    Intent data;
-    private void connectDevice() {
-
+    public static Intent data;
+    public static void connectDevice() {
         device_name = data.getExtras().getString(EXTRAS_DEVICE_NAME);
         device_address = data.getExtras().getString(EXTRAS_DEVICE_ADDRESS);
         Log.d(TAG, device_name);
@@ -270,18 +261,11 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             Log.d(TAG, "Connect finish");
             mConnected = true;
             //add UI scene
-            Intent uiHomeIntent = new Intent(getApplicationContext(), UIScene.class);
-            startActivity(uiHomeIntent);
+            Intent uiHomeIntent = new Intent(context, UIScene.class);
+            context.startActivity(uiHomeIntent);
         }else{
-            Toast.makeText(this, "블루투스가 연결되지 않았습니다.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "블루투스가 연결되지 않았습니다.",Toast.LENGTH_SHORT).show();
         }
-
-//        if(mBluetoothLeService.connect(device_address)){
-//            Log.d(TAG, "Connect finish");
-//            //add UI scene
-//            Intent uiHomeIntent = new Intent(getApplicationContext(), UIScene.class);
-//            startActivity(uiHomeIntent);
-//        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -368,13 +352,15 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //        }
 //    };
 
-    public void actions(String message) throws ClassNotFoundException, NoSuchMethodException, RemoteException, IllegalAccessException, InvocationTargetException {
+
+    public static void actions(String message) {//throws ClassNotFoundException, NoSuchMethodException, RemoteException, IllegalAccessException, InvocationTargetException {
 
         Log.d(TAG, "actions function called");
         if(message.equals("SingleClick")){
             if(Constants.musicPage){
                 if(MusicSceneAdapter.isFirstLineSingleChecked) {
                     playMusic();
+                    Log.d(TAG, "actions function called");
                 }
                 else if(MusicSceneAdapter.isSecondLineSingleChecked){
                     nextMusic();
@@ -503,27 +489,27 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     }
 
     //음악 플레이어 시작
-    public void startMusicPlayer() {
+    public static void startMusicPlayer() {
         Intent musicPlayerStartIntent = new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER);
-        startActivity(musicPlayerStartIntent);
+        context.startActivity(musicPlayerStartIntent);
     }
 
-    public void playMusic() {
+    public static void playMusic() {
         if (isPlaying == false) {
             Intent musicPlayerIntent = new Intent("com.android.music.musicservicecommand");
             musicPlayerIntent.putExtra("command", "play");
-            sendBroadcast(musicPlayerIntent);
+            context.sendBroadcast(musicPlayerIntent);
             isPlaying = true;
         } else {
             Intent musicPlayerIntent = new Intent("com.android.music.musicservicecommand");
             musicPlayerIntent.putExtra("command", "pause");
-            sendBroadcast(musicPlayerIntent);
+            context.sendBroadcast(musicPlayerIntent);
             isPlaying = false;
         }
     }
 
     //다음 음악 재생
-    public void nextMusic() {
+    public static void nextMusic() {
         /*Intent nextMusicIntent = new Intent("com.android.music.musicservicecommand");
         nextMusicIntent.putExtra("command", "next");
         sendBroadcast(nextMusicIntent);*/
@@ -531,7 +517,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     }
 
     //이전 음악 재생
-    public void prevMusic() {
+    public static void prevMusic() {
         /*Intent nextMusicIntent = new Intent("com.android.music.musicservicecommand");
         nextMusicIntent.putExtra("command", "previous");
         sendBroadcast(nextMusicIntent);*/
@@ -543,7 +529,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //    SurfaceView view;
 //    private Camera.Parameters parameters;
 //    private SurfaceHolder sHolder;
-    public void startCamera() {
+    public static void startCamera() {
 //        cameraIntent = new Intent(this, CameraActivity.class);
 //        Constants.cameraPage = true;
 //        Constants.selfiePage = false;
@@ -604,14 +590,14 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     }
 
 
-    public void sendSMS() {
+    public static void sendSMS() {
         Log.d(TAG, "Send SMS");
         String phoneNumber = "01055201059";//사용자 휴대폰 번호
         String message = "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude;
 
         SmsManager smsManager = SmsManager.getDefault();
         smsManager.sendTextMessage(phoneNumber, null, message, null, null);
-        Toast.makeText(getApplicationContext(), "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude, Toast.LENGTH_LONG).show();
 
     }
 
@@ -639,8 +625,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     }
 
 
-    public void rejectCall() {
-        TelephonyManager telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+    public static void rejectCall() {
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         Class clazz = null;
         try {
             clazz = Class.forName(telephonyManager.getClass().getName());
@@ -669,12 +655,13 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //        }
     }
 
-    public void findPhone() {
+    public static
+    void findPhone() {
         if (!isAudioPlay) {
             try {
                 mAudio = new MediaPlayer();
                 Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-                mAudio.setDataSource(this, alert);
+                mAudio.setDataSource(context, alert);
                 mAudio.setAudioStreamType(streamType);
                 mAudio.setLooping(true);
                 mAudio.prepare();
@@ -692,8 +679,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         connectDevice();
     }
     public void onTestButtonClicked(View v){
-        Intent uiHomeIntent = new Intent(getApplicationContext(), UIScene.class);
-        startActivity(uiHomeIntent);
+        playMusic();
     }
     @Override
     protected void onDestroy() {

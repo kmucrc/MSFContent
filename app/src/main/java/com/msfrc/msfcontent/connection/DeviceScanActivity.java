@@ -65,6 +65,8 @@ public class DeviceScanActivity extends AppCompatActivity{
 //                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 //        mBluetoothAdapter = bluetoothManager.getAdapter();
         mBluetoothAdapter = ConnectionScene.mBluetoothAdapter;
+//        final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+//        mBluetoothAdapter = bluetoothManager.getAdapter();
 
         // Checks if Bluetooth is supported on the device.
         if (mBluetoothAdapter == null) {

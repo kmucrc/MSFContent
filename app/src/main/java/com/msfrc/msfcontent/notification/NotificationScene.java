@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.base.Constants;
+import com.msfrc.msfcontent.connection.ConnectionScene;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -197,15 +198,20 @@ public class NotificationScene extends AppCompatActivity{
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals(reminderAction)){
-                if(Constants.redColor[2]);
+                if(Constants.redColor[2])
+                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("1123E119");
 //                    ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
-                else if(Constants.blueColor[2]);
+                else if(Constants.blueColor[2])
+                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11F66100");
 //                    ConnectionScene.mBluetoothService.write("099EFF".getBytes());
-                else if(Constants.greenColor[2]);
+                else if(Constants.greenColor[2])
+                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11B9194B");
 //                    ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
-                else if(Constants.yelloColor[2]);
+                else if(Constants.yelloColor[2])
+                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11002699");
 //                    ConnectionScene.mBluetoothService.write("FFD966".getBytes());
-                else if(Constants.whiteColor[2]);
+                else if(Constants.whiteColor[2])
+                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
 //                    ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
 
                 for(int i=0; i<=8; i++) {

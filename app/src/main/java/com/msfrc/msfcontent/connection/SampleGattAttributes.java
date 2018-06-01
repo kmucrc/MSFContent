@@ -28,6 +28,7 @@ public class SampleGattAttributes {
     public static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
     public static String SERVICE_COLOR = "0000de10-0000-1000-8000-00805f9b34fb";
     public static String SERVICE_COLOR_DATA = "00002c40-0000-1000-8000-00805f9b34fb";
+    public static String SERVICE_NOTI_DATA = "00002c41-0000-1000-8000-00805f9b34fb";
 //    public static UUID SERVICE_COLOR_UUID = convertFromInteger(0xde10);
 //    public static UUID SERVICE_COLOR_DATA_UUID = convertFromInteger(0x2c40);
     public static UUID convertFromInteger(int i) {

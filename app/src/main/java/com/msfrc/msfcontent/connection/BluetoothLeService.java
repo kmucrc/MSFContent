@@ -31,6 +31,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.msfrc.msfcontent.base.Constants;
+
 import java.math.BigInteger;
 import java.util.List;
 import java.util.UUID;
@@ -97,12 +99,18 @@ public class BluetoothLeService extends Service {
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
+            Log.i("BLESercvice", "onServicesDiscovered");
+            setButtonNotification(true);
         }
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
+//            byte[] value = characteristic.getValue();
+//            String v = new String(value);
+//            Toast.makeText(getApplicationContext(), "onCharacteristicRead", Toast.LENGTH_SHORT).show();
+            Log.i("BLESercvice", "onCharacteristicRead");
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
             }
@@ -111,7 +119,22 @@ public class BluetoothLeService extends Service {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
+//            setCharacteristicNotification(characteristic, true);
+            final byte[] dataInput = characteristic.getValue();
+//            Log.i("BLESercvice", "onCharacteristicChanged : "+dataInput);
             broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+            if(inData.contains("00")){
+                //intent.putExtra(EXTRA_DATA, "SingleClick");
+//                ConnectionScene.actions("SingleClick");
+                String chooseColor = Constants.basicColor.substring(1);
+                String co = "11";
+                for(int i=2; i<8;i++){
+                    int a = 0xf - Integer.parseInt(String.valueOf(chooseColor.charAt(i)),16);
+                    co+=Integer.toHexString(a);
+                }
+                writeColorCharacteristic(co);
+                Log.i("BLESercvice", "writeColor");
+            }
         }
     };
 
@@ -119,11 +142,11 @@ public class BluetoothLeService extends Service {
         final Intent intent = new Intent(action);
         sendBroadcast(intent);
     }
-
+    String inData = "";
     private void broadcastUpdate(final String action,
                                  final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
-
+        Log.d("BLESercvice", "broadcastUpdate");
         // This is special handling for the Heart Rate Measurement profile.  Data parsing is
         // carried out as per profile specifications:
         // http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml
@@ -147,6 +170,22 @@ public class BluetoothLeService extends Service {
 //                intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
 //            }
 //        }
+        if(UUID.fromString(SampleGattAttributes.SERVICE_NOTI_DATA).equals(characteristic.getUuid())){
+            final byte[] data = characteristic.getValue();
+            if (data != null && data.length > 0) {
+                final StringBuilder stringBuilder = new StringBuilder(data.length);
+                for (byte byteChar : data)
+                    stringBuilder.append(String.format("%02X ", byteChar));
+                inData = stringBuilder.toString();
+                Log.d(TAG, "Received: "+ inData);
+            }
+            if(inData.equals("01")){
+                ConnectionScene.actions("SingleClick");
+            } if(inData.contains("00")){
+                ConnectionScene.actions("SingleClick");
+            }
+            intent.putExtra(EXTRA_DATA, String.valueOf(inData));
+        }
         sendBroadcast(intent);
     }
 
@@ -219,6 +258,7 @@ public class BluetoothLeService extends Service {
             Log.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
             if (mBluetoothGatt.connect()) {
                 mConnectionState = STATE_CONNECTING;
+                ConnectionScene.mConnected = true;
                 return true;
             } else {
                 return false;
@@ -236,6 +276,7 @@ public class BluetoothLeService extends Service {
         Log.d(TAG, "Trying to create a new connection.");
         mBluetoothDeviceAddress = address;
         mConnectionState = STATE_CONNECTING;
+        ConnectionScene.mConnected = true;
         return true;
     }
     private String color = "No Data";
@@ -332,6 +373,8 @@ public class BluetoothLeService extends Service {
      * @param characteristic Characteristic to act on.
      * @param enabled If true, enable notification.  False otherwise.
      */
+    public final static UUID UUID_SERVICE_NOTI =
+            UUID.fromString(SampleGattAttributes.SERVICE_COLOR);
     public void setCharacteristicNotification(BluetoothGattCharacteristic characteristic,
                                               boolean enabled) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
@@ -339,14 +382,27 @@ public class BluetoothLeService extends Service {
             return;
         }
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+    }
+    public void setButtonNotification(boolean enable){
+        String uuidBCharacteristic = SampleGattAttributes.SERVICE_NOTI_DATA;
 
-        // This is specific to Heart Rate Measurement.
-//        if (SampleGattAttributes.SERVICE_COLOR_UUID.equals(characteristic.getUuid())) {
-//            BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
-//                    UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
-//            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-//            mBluetoothGatt.writeDescriptor(descriptor);
-//        }
+        BluetoothGattService mBluetoothLeService = null;
+        BluetoothGattCharacteristic mBluetoothGattCharacteristic = null;
+        for(BluetoothGattService service : mBluetoothGatt.getServices()){
+            if((service==null)||(service.getUuid()==null)) continue;;
+            if(SampleGattAttributes.SERVICE_COLOR.equalsIgnoreCase(service.getUuid().toString())){
+                mBluetoothLeService = service;
+            }
+        }
+        if(mBluetoothLeService!=null){
+            mBluetoothGattCharacteristic = mBluetoothLeService.getCharacteristic(UUID.fromString(uuidBCharacteristic));
+        }
+        else{
+            Log.i("BLEService","mBluetoothLeService is null");
+        }
+        if(mBluetoothGattCharacteristic!=null){
+            setCharacteristicNotification(mBluetoothGattCharacteristic, enable);
+        }
     }
 
     /**

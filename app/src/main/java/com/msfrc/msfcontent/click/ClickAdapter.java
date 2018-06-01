@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class ClickAdapter extends BaseAdapter{
     private ArrayList<ClickListData> clickMember;
     private LayoutInflater inflater;
-    private static final String TAG = "CLickAdapter";
+    private static final String TAG = "ClickAdapter";
     public ClickAdapter(LayoutInflater inflater, ArrayList<ClickListData> ClickMember){
         this.inflater= inflater;
         this.clickMember = ClickMember;

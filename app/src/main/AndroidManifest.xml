@@ -25,7 +25,10 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.VIBRATE"/><!--MannerMode-->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.SEND_SMS"/><!--emergencyMode-->
+    <uses-permission android:name="android.permission.CAMERA" />
 
 
     <application
@@ -102,6 +105,16 @@
                 android:value=".click.ClickScene" />
         </activity>
         <activity android:name=".click.findphone.FindPhoneScene">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".click.ClickScene" />
+        </activity>
+        <activity android:name=".click.light.LightScene">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".click.ClickScene" />
+        </activity>
+        <activity android:name=".click.record.RecordScene">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".click.ClickScene" />

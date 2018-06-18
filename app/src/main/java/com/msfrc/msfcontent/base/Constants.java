@@ -4,6 +4,9 @@ package com.msfrc.msfcontent.base;
  * Created by kmuvcl_laptop_dell on 2016-07-05.
  */
 public class Constants {
+    public static long beforClickTime = 0;
+    public static String beforSignal = "00";
+    public static boolean light = false;
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int REQUEST_CONNECT_DEVICE = 2;
 
@@ -30,6 +33,8 @@ public class Constants {
     public static boolean findPhonePage = false;
     public static boolean mannermodePage = false;
     public static boolean emergencyPage = false;
+    public static boolean lightPage = false;
+    public static boolean recordPage = false;
 
     public static boolean clickCameraPage = false;
     public static boolean cameraShot = false;
@@ -56,7 +61,7 @@ public class Constants {
     public static boolean[] parcelPosition = {false, false, false, false, false, false};
 
     public static boolean[] notificationCheck = {false, false, false};//phone call, text message, reminders
-    public static boolean[] clickCheck = {false, false, false, false, false};//music, camera, find phone, manner mode, emergency
+    public static boolean[] clickCheck = {true, false, false, false, false, false, false};//music, camera, emergency, manner mode, find phone, light, record
 
     public boolean isParcel = false;
 

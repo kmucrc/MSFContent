@@ -1,5 +1,6 @@
 package com.msfrc.msfcontent.click;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,30 +42,37 @@ public class ClickAdapter extends BaseAdapter{
         return position;
     }
 
+    private CheckBox mCheckBox;
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+        final Context context = parent.getContext();
         if(convertView== null){
             convertView = inflater.inflate(R.layout.notification_row, null);
         }
         ImageView mImageView = (ImageView)convertView.findViewById(R.id.image);
         TextView mTextView = (TextView)convertView.findViewById(R.id.label);
-        final CheckBox mCheckBox = (CheckBox)convertView.findViewById(R.id.selected);
+        mCheckBox = (CheckBox)convertView.findViewById(R.id.selected);
         mImageView.setImageResource(clickMember.get(position).getImgId());
         mTextView.setText(clickMember.get(position).getFunctionName());
+        mCheckBox.setChecked(Constants.clickCheck[position]);
         mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
                 if ( isChecked )
                 {
+                    for (int i = 0;i<7;i++){
+                        Constants.clickCheck[i] = false;
+                        clickMember.get(i).setChecked(false);
+                    }
                     Constants.clickCheck[position] = true;
-                }else Constants.clickCheck[position] = false;
-
-            }
-        });
-        mTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                    clickMember.get(position).setChecked(true);
+                    notifyDataSetChanged();
+                }else{
+                    Constants.clickCheck[position] = false;
+                    clickMember.get(position).setChecked(false);
+                }
+                Log.d("check", "position:"+position+", isChecked:"+isChecked);
                 switch(position){
                     case 0:
                         if(Constants.clickCheck[position]) {
@@ -106,6 +114,22 @@ public class ClickAdapter extends BaseAdapter{
                         }
                         else{
                             Constants.findPhonePage = false;
+                        }
+                        break;
+                    case 5:
+                        if(Constants.clickCheck[position]) {
+                            Constants.lightPage = true;
+                        }
+                        else{
+                            Constants.lightPage = false;
+                        }
+                        break;
+                    case 6:
+                        if(Constants.clickCheck[position]) {
+                            Constants.recordPage = true;
+                        }
+                        else{
+                            Constants.recordPage = false;
                         }
                         break;
                 }

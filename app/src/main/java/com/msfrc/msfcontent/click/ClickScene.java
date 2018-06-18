@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +18,10 @@ import android.widget.TextView;
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.click.emergency.EmergencyScene;
 import com.msfrc.msfcontent.click.findphone.FindPhoneScene;
+import com.msfrc.msfcontent.click.light.LightScene;
 import com.msfrc.msfcontent.click.mannermode.MannerModeScene;
 import com.msfrc.msfcontent.click.music.MusicScene;
+import com.msfrc.msfcontent.click.record.RecordScene;
 
 import java.util.ArrayList;
 
@@ -44,9 +47,11 @@ public class ClickScene extends AppCompatActivity implements AdapterView.OnItemC
         datas.add(new ClickListData(R.drawable.emergency, "EMERGENCY"));
         datas.add(new ClickListData(R.drawable.mannermode, "MANNER MODE"));
         datas.add(new ClickListData(R.drawable.findphone, "FIND PHONE"));
+        datas.add(new ClickListData(R.drawable.ic_highlight_24dp, "LIGHT CONTROL"));
+        datas.add(new ClickListData(R.drawable.ic_record_voice_24dp, "RECORD VOICE"));
 
         listView = (ListView)findViewById(R.id.list);
-
+        listView.setChoiceMode(listView.CHOICE_MODE_SINGLE);
         ClickAdapter mAdapter = new ClickAdapter(getLayoutInflater(), datas);
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(this);
@@ -66,6 +71,7 @@ public class ClickScene extends AppCompatActivity implements AdapterView.OnItemC
     }
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.d("check", "position:"+position+", id:"+id);
         switch(position){
             case 0:
                 Intent musicSceneIntent = new Intent(getApplicationContext(), MusicScene.class);
@@ -86,6 +92,14 @@ public class ClickScene extends AppCompatActivity implements AdapterView.OnItemC
             case 4:
                 Intent findPhoneIntent = new Intent(getApplicationContext(), FindPhoneScene.class);
                 startActivity(findPhoneIntent);
+                break;
+            case 5:
+                Intent lightIntent = new Intent(getApplicationContext(), LightScene.class);
+                startActivity(lightIntent);
+                break;
+            case 6:
+                Intent recordIntent = new Intent(getApplicationContext(), RecordScene.class);
+                startActivity(recordIntent);
                 break;
         }
     }

@@ -10,6 +10,13 @@ public class ClickListData {
         this.imgId= imgId;
         this.functionName = functionName;
     }
+    private boolean checked = false;
+    public void setChecked(boolean checked){
+        this.checked = checked;
+    }
+    public boolean isChecked(){
+        return checked;
+    }
 
     public int getImgId() {
         return imgId;

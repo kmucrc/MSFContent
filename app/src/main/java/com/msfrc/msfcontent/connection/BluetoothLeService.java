@@ -126,14 +126,14 @@ public class BluetoothLeService extends Service {
             if(inData.contains("00")){
                 //intent.putExtra(EXTRA_DATA, "SingleClick");
 //                ConnectionScene.actions("SingleClick");
-                String chooseColor = Constants.basicColor.substring(1);
-                String co = "11";
-                for(int i=2; i<8;i++){
-                    int a = 0xf - Integer.parseInt(String.valueOf(chooseColor.charAt(i)),16);
-                    co+=Integer.toHexString(a);
-                }
-                writeColorCharacteristic(co);
-                Log.i("BLESercvice", "writeColor");
+//                String chooseColor = Constants.basicColor.substring(1);
+//                String co = "11";
+//                for(int i=2; i<8;i++){
+//                    int a = 0xf - Integer.parseInt(String.valueOf(chooseColor.charAt(i)),16);
+//                    co+=Integer.toHexString(a);
+//                }
+//                writeColorCharacteristic(co);
+//                Log.i("BLESercvice", "writeColor");
             }
         }
     };
@@ -179,10 +179,42 @@ public class BluetoothLeService extends Service {
                 inData = stringBuilder.toString();
                 Log.d(TAG, "Received: "+ inData);
             }
-            if(inData.equals("01")){
-                ConnectionScene.actions("SingleClick");
-            } if(inData.contains("00")){
-                ConnectionScene.actions("SingleClick");
+            if(inData.contains("01")){
+                // ConnectionScene.actions("SingleClick");
+//                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+//                try{
+//                    Thread.sleep(1000);
+//                }catch (InterruptedException e){ }
+//                if(Constants.beforSignal.equals("01"))
+//                    Constants.beforSignal ="03";
+//                else
+                    Constants.beforSignal ="01";
+            }if(inData.contains("02")){
+                Constants.beforSignal ="02";//ConnectionScene.actions("Hold");
+            }if(inData.contains("00")){
+                if(Constants.beforSignal.contains("01")){
+//                    ConnectionScene.actions("SingleClick");
+                    long time = System.currentTimeMillis();
+                    if((time-Constants.beforClickTime)/1000.0 < 1){
+                        ConnectionScene.actions("DoubleClick");
+                    }else{
+                        ConnectionScene.actions("SingleClick");
+                    }Constants.beforClickTime=time;
+                }if(Constants.beforSignal.contains("02")){
+                    ConnectionScene.actions("Hold");
+//                }if(Constants.beforSignal.contains("03")){
+//                    ConnectionScene.actions("DoubleClick");
+                }
+                Constants.beforSignal ="00";
+                //다시 색 출력
+                String chooseColor = Constants.basicColor.substring(1);
+                String co = "11";
+                for(int i=2; i<8;i++){
+                    int a = 0xf - Integer.parseInt(String.valueOf(chooseColor.charAt(i)),16);
+                    co+=Integer.toHexString(a);
+                }
+                writeColorCharacteristic(co);
+                Log.i("BLESercvice", "writeColor");
             }
             intent.putExtra(EXTRA_DATA, String.valueOf(inData));
         }

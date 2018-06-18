@@ -1,29 +1,40 @@
 package com.msfrc.msfcontent.connection;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
@@ -41,18 +52,23 @@ import com.msfrc.msfcontent.click.mannermode.MannerModeSceneAdapter;
 import com.msfrc.msfcontent.click.music.MusicSceneAdapter;
 import com.msfrc.msfcontent.home.UIScene;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
 public class ConnectionScene extends AppCompatActivity implements LocationListener{
 
-    Uri myPicture = null;
+    public static Uri myPicture = null;
     private static final String TAG = "ConnectionScene";
     public static AudioManager mAudioManager;
     public static Button start;
 
     //Bluetooth
     static BluetoothAdapter mBluetoothAdapter;
+    private static Vibrator mVibe;
+    private static long[] parcelArray = {0, 1000, 500};
+    //recorder
+    private static MediaRecorder mRecorder;
     public static boolean isPlaying = false;
     private String mConnectedDeviceName = null;
 
@@ -139,25 +155,39 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
 //    private GoogleApiClient client;
     public static Context context;
+    static Activity mActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
+        mActivity = this;
         setContentView(R.layout.scence_connection);
 
         getSupportActionBar().hide();
         start = (Button)findViewById(R.id.startButton);
 
-        mAudioManager = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+//        mAudioManager = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         mProvider = mLocationManager.getBestProvider(criteria, false);
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE
-                , Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH
-                , Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
+        //무음모드 에러
+        NotificationManager notificationManager =
+                (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //퍼미션 상태 확인
+            if (!hasPermissions(PERMISSIONS)) {
+                //퍼미션 허가 안되어있다면 사용자에게 요청
+                requestPermissions(PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+            }
+            if (!notificationManager.isNotificationPolicyAccessGranted()){
+                Toast.makeText(context,"방해금지모드를 해제해주세요",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                startActivity(intent);
+            }
+        }
 //        if(isGpsEnabled) {
 //            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 //            Log.d(TAG, "GPSProvider");
@@ -167,7 +197,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //            Log.d(TAG, "NetworkProvider");
 //        }
         cameraId = findFrontCameraId();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         if(location!= null) {
@@ -202,11 +233,43 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             mBluetoothAdapter = bluetoothManager.getAdapter();
         }
     }
-    //ble scanner문제해결
+    //여기서부턴 퍼미션 관련 메소드
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 456;
+    static final int PERMISSIONS_REQUEST_CODE = 1000;
+    String[] PERMISSIONS  = {"android.permission.INTERNET"
+            , "android.permission.ACCESS_FINE_LOCATION"
+            , "android.permission.BLUETOOTH", "android.permission.BLUETOOTH_ADMIN"
+            , "android.permission.SEND_SMS", "android.permission.READ_PHONE_STATE"
+            , "android.permission.ACCESS_NOTIFICATION_POLICY"
+            , "android.permission.READ_CONTACTS", "android.permission.CAMERA"};
+
+    private boolean hasPermissions(String[] permissions) {
+        int result;
+        //스트링 배열에 있는 퍼미션들의 허가 상태 여부 확인
+        for (String perms : permissions){
+            result = ContextCompat.checkSelfPermission(this, perms);
+            if (result == PackageManager.PERMISSION_DENIED){
+                //허가 안된 퍼미션 발견
+                return false;
+            }
+        }
+        //모든 퍼미션이 허가되었음
+        return true;
+    }
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode){
+            case PERMISSIONS_REQUEST_CODE:
+                if (grantResults.length > 0) {
+                    boolean cameraPermissionAccepted = grantResults[0]
+                            == PackageManager.PERMISSION_GRANTED;
+                    if (!cameraPermissionAccepted)
+                        showDialogForPermission("앱을 실행하려면 퍼미션을 허가하셔야합니다.");
+                }
+                break;
             case PERMISSION_REQUEST_COARSE_LOCATION: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission granted, yay! Start the Bluetooth device scan.
@@ -215,6 +278,25 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                 }
             }
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void showDialogForPermission(String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder( ConnectionScene.this);
+        builder.setTitle("알림");
+        builder.setMessage(msg);
+        builder.setCancelable(false);
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id){
+                requestPermissions(PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+            }
+        });
+        builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                finish();
+            }
+        });
+        builder.create().show();
     }
     private int findFrontCameraId() {
         int cameraId = -1;
@@ -355,7 +437,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
     public static void actions(String message) {//throws ClassNotFoundException, NoSuchMethodException, RemoteException, IllegalAccessException, InvocationTargetException {
 
-        Log.d(TAG, "actions function called");
+        Log.d(TAG, "actions function called : "+message);
         if(message.equals("SingleClick")){
             if(Constants.musicPage){
                 if(MusicSceneAdapter.isFirstLineSingleChecked) {
@@ -386,8 +468,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                 }
             }
             else if(Constants.mannermodePage){
-                if(MannerModeSceneAdapter.isFirstLineSingleChecked) {
-                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                if(MannerModeSceneAdapter.isFirstLineSingleChecked && mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+                    setSilentMode();
                 }
                 else if(MannerModeSceneAdapter.isSecondLineSingleChecked){
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
@@ -430,7 +512,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             }
             else if(Constants.mannermodePage){
                 if(MannerModeSceneAdapter.isFirstLineDoubleChecked) {
-                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                    setSilentMode();
                 }
                 else if(MannerModeSceneAdapter.isSecondLineDoubleChecked){
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
@@ -470,7 +552,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             }
             else if(Constants.mannermodePage){
                 if(MannerModeSceneAdapter.isFirstLineHoldChecked){
-                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                    setSilentMode();
                 }
                 else if(MannerModeSceneAdapter.isSecondLineHoldChecked){
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
@@ -479,13 +561,108 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                     rejectCall();
                 }
             }
+        }if(Constants.lightPage){
+            if(Constants.light)
+                turnOffLight();
+            else turnOnLight();
         }
         else if(message.equals("MusicPlayer")){
             startMusicPlayer();
         }
         else if(message.equals("OpenCamera")) {
             startCamera();
+        }else if(message.equals("CaptureCamera")){
+            captureCamera();
         }
+        else if(message.equals("playMusic")){
+            playMusic();
+        }
+        else if(message.equals("playNext")){
+            nextMusic();
+        }
+        else if(message.equals("PlayPrev")){
+            prevMusic();
+        }
+        else if(message.equals("TurnOnLignt")){
+            turnOnLight();
+        }
+        else if(message.equals("TurnOffLignt")){
+            turnOffLight();
+        }
+        else if(message.equals("VoiceRecord")){
+            recordingVoice();
+        }
+        else if(message.equals(("VoiceRecordStop"))){
+            stopRecordingVoice();
+        }
+        else{
+            try{
+                if(message.equals("onevibe")){
+                    mVibe.vibrate(parcelArray, 1);
+                }
+                else if(message.equals("twovibe")){
+                    mVibe.vibrate(parcelArray, 2);
+                }
+                else if(message.equals("threevibe")){
+                    mVibe.vibrate(parcelArray, 3);
+                }
+                else if(message.equals("fourvibe")){
+                    mVibe.vibrate(parcelArray, 4);
+                }
+                else if(message.equals("infinitevibe")){
+                    mVibe.vibrate(parcelArray, 10);
+                }
+                else if(message.equals("nonevibe")){
+                    mVibe.vibrate(parcelArray, 0);
+                }
+                else{
+//                    ConnectionScene.this.findViewById(android.R.id.content).setBackgroundColor(Color.parseColor("#"+message));
+                }
+            }
+            catch(Exception e){
+            }
+        }
+    }
+
+    //추가기능 light
+    public static void turnOnLight(){
+        Constants.light = true;
+        Camera camera = Camera.open();
+        Camera.Parameters p = camera.getParameters();
+        p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+        camera.setParameters(p);
+        camera.startPreview();
+    }
+    public static void turnOffLight(){
+        Constants.light = false;
+        Camera camera = Camera.open();
+        Camera.Parameters p = camera.getParameters();
+        p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        camera.setParameters(p);
+        camera.stopPreview();
+    }
+    //추가 녹음
+    public static void recordingVoice(){
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        String mFileName = context.getExternalCacheDir().getAbsolutePath();
+        mFileName += "/audiorecordtest.3gp";
+        mRecorder.setOutputFile(mFileName);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            mRecorder.prepare();
+        } catch (IOException e) {
+            //Log.e(LOG_TAG, "prepare() failed");
+        }
+
+        mRecorder.start();
+    }
+    public static void stopRecordingVoice(){
+        mRecorder.stop();
+        mRecorder.release();
+        mRecorder = null;
     }
 
     //음악 플레이어 시작
@@ -513,7 +690,10 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         /*Intent nextMusicIntent = new Intent("com.android.music.musicservicecommand");
         nextMusicIntent.putExtra("command", "next");
         sendBroadcast(nextMusicIntent);*/
-        Constants.selfishot = true;
+//        Constants.selfishot = true;
+        Intent nextMusicIntent = new Intent("com.android.music.musicservicecommand");
+        nextMusicIntent.putExtra("command", "next");
+        context.sendBroadcast(nextMusicIntent);
     }
 
     //이전 음악 재생
@@ -521,7 +701,10 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         /*Intent nextMusicIntent = new Intent("com.android.music.musicservicecommand");
         nextMusicIntent.putExtra("command", "previous");
         sendBroadcast(nextMusicIntent);*/
-        rejectCall();
+//        rejectCall();
+        Intent nextMusicIntent = new Intent("com.android.music.musicservicecommand");
+        nextMusicIntent.putExtra("command", "previous");
+        context.sendBroadcast(nextMusicIntent);
     }
 
 //    private Intent cameraIntent;
@@ -529,12 +712,10 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //    SurfaceView view;
 //    private Camera.Parameters parameters;
 //    private SurfaceHolder sHolder;
+    //카메라 오픈
     public static void startCamera() {
-//        cameraIntent = new Intent(this, CameraActivity.class);
-//        Constants.cameraPage = true;
-//        Constants.selfiePage = false;
-//        Constants.videoPage = false;
-//        startActivity(cameraIntent);
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        mActivity.startActivityForResult(cameraIntent, Constants.REQUEST_IMAGE_CAPTURE);
     }
     public void selfieCamera(){
 //        cameraIntent = new Intent(this, SelfieCamera.class);
@@ -550,49 +731,19 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //        Constants.selfiePage = false;
 //        startActivity(cameraIntent);
     }
-    public void captureCamera() {
-        Log.d(TAG, "Capture start");
-        if(Constants.cameraPage){
-            Constants.cameraShot = true;
-        }
-        else if(Constants.selfiePage) {
-            Constants.selfishot = true;
-        }
-        // Video
-        else if(Constants.videoPage) {
-            if (count % 2 == 0) {
-                Constants.videoShot = true;
-                count++;
-            }
-            else {
-                Constants.videoShot = false;
-                count++;
-            }
-        }
-        //Get a surface
-//        Instrumentation instrumentation = new Instrumentation();
-//        instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_VOLUME_UP);
-        //mAudioManager.adjustStreamVolume(AudioManager.STREAM_VOICE_CALL, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
-        //myCamera.takePicture(null, null, new PhotoHandler(getApplicationContext()));
-        Log.d(TAG, ""+cameraId);
-        /*new Thread(new Runnable() {
-            public void run() {
-                new Instrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_VOLUME_UP);
-            }
-        }).start();*/
-        //Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        //startActivityForResult(cameraIntent, Constants.CAMERA_CAPTURE);
-
-//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-//            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-//        }
+    public static void captureCamera() {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "My demo image");
+        myPicture = Uri.fromFile(new File(Environment.getExternalStorageDirectory()+"/imageCapyureIntent.jpg"));
+        Intent captureIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+        captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, myPicture);
+        context.startActivity(captureIntent);
     }
 
 
     public static void sendSMS() {
         Log.d(TAG, "Send SMS");
-        String phoneNumber = "01055201059";//사용자 휴대폰 번호
+        String phoneNumber = "01063985274";//사용자 휴대폰 번호
         String message = "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude;
 
         SmsManager smsManager = SmsManager.getDefault();
@@ -600,9 +751,6 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         Toast.makeText(context, "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude, Toast.LENGTH_LONG).show();
 
     }
-
-
-
     public void onLocationChanged(Location location) {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
@@ -655,8 +803,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //        }
     }
 
-    public static
-    void findPhone() {
+    public static void findPhone() {
         if (!isAudioPlay) {
             try {
                 mAudio = new MediaPlayer();
@@ -675,11 +822,21 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             isAudioPlay = false;
         }
     }
+    public static void setSilentMode(){
+        NotificationManager n = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if(n.isNotificationPolicyAccessGranted()) {
+            mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        }else{
+            Toast.makeText(context,"방해금지모드를 해제해주세요",Toast.LENGTH_SHORT).show();
+        }
+    }
     public void onStartButtonClicked(View v){
         connectDevice();
     }
     public void onTestButtonClicked(View v){
-        playMusic();
+        if(Constants.light)
+            turnOffLight();
+        else turnOnLight();
     }
     @Override
     protected void onDestroy() {

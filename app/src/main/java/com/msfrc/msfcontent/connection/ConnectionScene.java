@@ -241,7 +241,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             , "android.permission.BLUETOOTH", "android.permission.BLUETOOTH_ADMIN"
             , "android.permission.SEND_SMS", "android.permission.READ_PHONE_STATE"
             , "android.permission.ACCESS_NOTIFICATION_POLICY"
-            , "android.permission.READ_CONTACTS", "android.permission.CAMERA"};
+            , "android.permission.READ_CONTACTS", "android.permission.CAMERA"
+            , "android.permission.RECORD_AUDIO", "android.permission.WRITE_EXTERNAL_STORAGE"};
 
     private boolean hasPermissions(String[] permissions) {
         int result;
@@ -565,6 +566,10 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             if(Constants.light)
                 turnOffLight();
             else turnOnLight();
+        }if(Constants.recordPage){
+            if(Constants.record)
+                stopRecordingVoice();
+            else recordingVoice();
         }
         else if(message.equals("MusicPlayer")){
             startMusicPlayer();
@@ -583,18 +588,18 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         else if(message.equals("PlayPrev")){
             prevMusic();
         }
-        else if(message.equals("TurnOnLignt")){
-            turnOnLight();
-        }
-        else if(message.equals("TurnOffLignt")){
-            turnOffLight();
-        }
-        else if(message.equals("VoiceRecord")){
-            recordingVoice();
-        }
-        else if(message.equals(("VoiceRecordStop"))){
-            stopRecordingVoice();
-        }
+//        else if(message.equals("TurnOnLignt")){
+//            turnOnLight();
+//        }
+//        else if(message.equals("TurnOffLignt")){
+//            turnOffLight();
+//        }
+//        else if(message.equals("VoiceRecord")){
+//            recordingVoice();
+//        }
+//        else if(message.equals(("VoiceRecordStop"))){
+//            stopRecordingVoice();
+//        }
         else{
             try{
                 if(message.equals("onevibe")){
@@ -641,28 +646,67 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         camera.setParameters(p);
         camera.stopPreview();
     }
+    final private static String RECORDED_FILE = Environment.getExternalStorageDirectory().getAbsolutePath()+"/recorded.mp4";
     //추가 녹음
     public static void recordingVoice(){
+        if(mRecorder!=null){
+            mRecorder.stop();
+            mRecorder.release();
+            mRecorder = null;
+        }
+        Constants.record = true;
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        String mFileName = context.getExternalCacheDir().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp";
-        mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
+//        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+//        String mFileName = context.getExternalCacheDir().getAbsolutePath();
+//        mFileName += "/audiorecordtest.3gp";
+//        mRecorder.setOutputFile(mFileName);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+//        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mRecorder.setOutputFile(RECORDED_FILE);
         try {
+            Toast.makeText(mActivity.getApplicationContext(),"녹음을 시작합니다.",
+                    Toast.LENGTH_SHORT).show();
             mRecorder.prepare();
+            Log.e(TAG, "start() failed");
+            mRecorder.start();
         } catch (IOException e) {
-            //Log.e(LOG_TAG, "prepare() failed");
+            Log.e(TAG, "prepare() failed");
         }
 
-        mRecorder.start();
     }
     public static void stopRecordingVoice(){
+        Constants.record = false;
+        if(mRecorder==null) return;
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
+        Toast.makeText(mActivity.getApplicationContext(),"녹음이 중지되었습니다.",
+                Toast.LENGTH_SHORT).show();
+    }
+    static MediaPlayer player;
+    public static void playRecordingVoice(){
+        if(player!=null){
+            player.stop();
+            player.release();
+            player = null;
+        }Toast.makeText(mActivity.getApplicationContext(),"녹음된 파일을 재생합니다.",
+                Toast.LENGTH_SHORT).show();
+        try{
+            player = new MediaPlayer();
+            player.setDataSource(RECORDED_FILE);
+            player.prepare();
+            player.start();
+        }catch (Exception e){}
+    }
+    public static void playStopRecordingVoice(){
+        if(player==null) return;
+        Toast.makeText(mActivity.getApplicationContext(),"재생을 중지합니다.",
+                Toast.LENGTH_SHORT).show();
+        player.stop();
+        player.release();
+        player=null;
     }
 
     //음악 플레이어 시작
@@ -833,10 +877,16 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     public void onStartButtonClicked(View v){
         connectDevice();
     }
+    int a = 0;
     public void onTestButtonClicked(View v){
-        if(Constants.light)
-            turnOffLight();
-        else turnOnLight();
+//        if(Constants.record)
+//            stopRecordingVoice();
+//        else recordingVoice();
+        if(a%4==0) recordingVoice();
+        if(a%4==1) stopRecordingVoice();
+        if(a%4==2) playRecordingVoice();
+        if(a%4==3) playStopRecordingVoice();
+        a++;
     }
     @Override
     protected void onDestroy() {

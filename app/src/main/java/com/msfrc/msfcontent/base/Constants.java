@@ -7,6 +7,7 @@ public class Constants {
     public static long beforClickTime = 0;
     public static String beforSignal = "00";
     public static boolean light = false;
+    public static boolean record = false;
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int REQUEST_CONNECT_DEVICE = 2;
 

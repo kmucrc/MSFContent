@@ -47,6 +47,10 @@ import android.widget.Toast;
 
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.base.Constants;
+import com.msfrc.msfcontent.click.camera.CameraActivity;
+import com.msfrc.msfcontent.click.camera.CameraSceneAdapter;
+import com.msfrc.msfcontent.click.camera.SelfieCamera;
+import com.msfrc.msfcontent.click.camera.VideoActivity;
 import com.msfrc.msfcontent.click.emergency.EmergencySceneAdapter;
 import com.msfrc.msfcontent.click.mannermode.MannerModeSceneAdapter;
 import com.msfrc.msfcontent.click.music.MusicSceneAdapter;
@@ -440,7 +444,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
         Log.d(TAG, "actions function called : "+message);
         if(message.equals("SingleClick")){
-            if(Constants.musicPage){
+            if(Constants.clickCheck[0]){//Constants.musicPage){
                 if(MusicSceneAdapter.isFirstLineSingleChecked) {
                     playMusic();
                     Log.d(TAG, "actions function called");
@@ -452,23 +456,22 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                     prevMusic();
                 }
             }
-//            else if(Constants.clickCameraPage){
-//                if(CameraSceneAdapter.isFirstLineSingleChecked) {
-//                    captureCamera();
-//                }
-//                else if(CameraSceneAdapter.isSecondLineSingleChecked){
-//                    videoCamera();
-//                }
-//                else{
-//                    selfieCamera();
-//                }
-//            }
-            else if(Constants.emergencyPage){
-                if(EmergencySceneAdapter.isFirstLineSingleChecked) {
-                    sendSMS();
+            else if(Constants.clickCheck[1]){//Constants.clickCameraPage){
+                if(Constants.clickCameraValue[0][0]){//CameraSceneAdapter.isFirstLineSingleChecked) {
+                    captureCamera();
+                    Log.d(TAG, "capture called");
+                }
+                else if(Constants.clickCameraValue[1][0]){//CameraSceneAdapter.isSecondLineSingleChecked){
+                    videoCamera();
+                }
+                else if(Constants.clickCameraValue[2][0]){
+                    selfieCamera();
                 }
             }
-            else if(Constants.mannermodePage){
+            else if(Constants.clickCheck[2]){//Constants.emergencyPage){
+                sendSMS();
+            }
+            else if(Constants.clickCheck[3]){//Constants.mannermodePage){
                 if(MannerModeSceneAdapter.isFirstLineSingleChecked && mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
                     setSilentMode();
                 }
@@ -478,9 +481,6 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                 else{
                     rejectCall();
                 }
-            }
-            else if(Constants.findPhonePage){
-                findPhone();
             }
         }
         else if(message.equals("DoubleClick")){
@@ -495,17 +495,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                     prevMusic();
                 }
             }
-//            else if(Constants.clickCameraPage){
-//                if(CameraSceneAdapter.isFirstLineDoubleChecked){
-//                    captureCamera();
-//                }
-//                else if(CameraSceneAdapter.isSecondLineDoubleChecked){
-//                    videoCamera();
-//                }
-//                else{
-//                    selfieCamera();
-//                }
-//            }
+            else if(Constants.clickCheck[1]){
+                if(Constants.clickCameraValue[0][1]){//CameraSceneAdapter.isFirstLineDoubleChecked){
+                    captureCamera();
+                }
+                else if(Constants.clickCameraValue[1][1]){//CameraSceneAdapter.isSecondLineDoubleChecked){
+                    videoCamera();
+                }
+                else if(Constants.clickCameraValue[2][1]){
+                    selfieCamera();
+                }
+            }
             else if(Constants.emergencyPage){
                 if(EmergencySceneAdapter.isFirstLineDoubleChecked){
                     sendSMS();
@@ -535,17 +535,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                     prevMusic();
                 }
             }
-//            else if(Constants.clickCameraPage){
-//                if(CameraSceneAdapter.isFirstLineHoldChecked){
-//                    captureCamera();
-//                }
-//                else if(CameraSceneAdapter.isSecondLineHoldChecked){
-//                    videoCamera();
-//                }
-//                else {
-//                    selfieCamera();
-//                }
-//            }
+            else if(Constants.clickCheck[1]){
+                if(Constants.clickCameraValue[0][2]){//CameraSceneAdapter.isFirstLineHoldChecked){
+                    captureCamera();
+                }
+                else if(Constants.clickCameraValue[1][2]){//CameraSceneAdapter.isSecondLineHoldChecked){
+                    videoCamera();
+                }
+                else if(Constants.clickCameraValue[0][2]){
+                    selfieCamera();
+                }
+            }
             else if(Constants.emergencyPage){
                 if(EmergencySceneAdapter.isFirstLineHoldChecked){
                     sendSMS();
@@ -562,32 +562,35 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                     rejectCall();
                 }
             }
-        }if(Constants.lightPage){
+        }if(Constants.findPhonePage||Constants.clickCheck[4]){
+            findPhone();
+        }
+        if(Constants.lightPage||Constants.clickCheck[5]){
             if(Constants.light)
                 turnOffLight();
             else turnOnLight();
-        }if(Constants.recordPage){
+        }if(Constants.recordPage||Constants.clickCheck[6]){
             if(Constants.record)
                 stopRecordingVoice();
             else recordingVoice();
         }
-        else if(message.equals("MusicPlayer")){
-            startMusicPlayer();
-        }
-        else if(message.equals("OpenCamera")) {
-            startCamera();
-        }else if(message.equals("CaptureCamera")){
-            captureCamera();
-        }
-        else if(message.equals("playMusic")){
-            playMusic();
-        }
-        else if(message.equals("playNext")){
-            nextMusic();
-        }
-        else if(message.equals("PlayPrev")){
-            prevMusic();
-        }
+//        else if(message.equals("MusicPlayer")){
+//            startMusicPlayer();
+//        }
+//        else if(message.equals("OpenCamera")) {
+//            startCamera();
+//        }else if(message.equals("CaptureCamera")){
+//            captureCamera();
+//        }
+//        else if(message.equals("playMusic")){
+//            playMusic();
+//        }
+//        else if(message.equals("playNext")){
+//            nextMusic();
+//        }
+//        else if(message.equals("PlayPrev")){
+//            prevMusic();
+//        }
 //        else if(message.equals("TurnOnLignt")){
 //            turnOnLight();
 //        }
@@ -758,22 +761,25 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //    private SurfaceHolder sHolder;
     //카메라 오픈
     public static void startCamera() {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mActivity.startActivityForResult(cameraIntent, Constants.REQUEST_IMAGE_CAPTURE);
+        Intent cameraIntent = new Intent(context, CameraActivity.class);
+//        Constants.cameraPage = true;
+//        Constants.videoPage = false;
+//        Constants.selfiePage = false;
+        context.startActivity(cameraIntent);
     }
-    public void selfieCamera(){
-//        cameraIntent = new Intent(this, SelfieCamera.class);
+    public static void selfieCamera(){
+        Intent cameraIntent = new Intent(context, SelfieCamera.class);
 //        Constants.selfiePage = true;
 //        Constants.cameraPage = false;
 //        Constants.videoPage = false;
-//        startActivity(cameraIntent);
+        context.startActivity(cameraIntent);
     }
-    public void videoCamera(){
-//        cameraIntent = new Intent(this, VideoActivity.class);
+    public static void videoCamera(){
+        Intent cameraIntent = new Intent(context, VideoActivity.class);
 //        Constants.videoPage = true;
 //        Constants.cameraPage = false;
 //        Constants.selfiePage = false;
-//        startActivity(cameraIntent);
+        context.startActivity(cameraIntent);
     }
     public static void captureCamera() {
         ContentValues values = new ContentValues();

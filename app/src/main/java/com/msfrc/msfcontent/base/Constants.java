@@ -64,6 +64,10 @@ public class Constants {
     public static boolean[] notificationCheck = {false, false, false};//phone call, text message, reminders
     public static boolean[] clickCheck = {true, false, false, false, false, false, false};//music, camera, emergency, manner mode, find phone, light, record
 
+//    public static int[] clickMusicValue = {0, 1, 2};
+//    public static int[] clickCameraValue = {0, 1, 2};//click=0, doubleClick=1, hold=2
+//    public static int[] clickMannerModeValue = {0, 1, 2};//music, camera, manner mode
+    public static boolean[][] clickCameraValue={{true, false, false},{false, true, false}, {false, false, true}};
     public boolean isParcel = false;
 
     public static String basicColor = "#ff4BADAC";

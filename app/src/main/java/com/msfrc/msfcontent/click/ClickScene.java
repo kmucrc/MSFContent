@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.click.camera.CameraScene;
 import com.msfrc.msfcontent.click.emergency.EmergencyScene;
 import com.msfrc.msfcontent.click.findphone.FindPhoneScene;
 import com.msfrc.msfcontent.click.light.LightScene;
@@ -77,10 +78,10 @@ public class ClickScene extends AppCompatActivity implements AdapterView.OnItemC
                 Intent musicSceneIntent = new Intent(getApplicationContext(), MusicScene.class);
                 startActivity(musicSceneIntent);
                 break;
-//            case 1:
-//                Intent cameraSceneIntent = new Intent(getApplicationContext(), CameraScene.class);
-//                startActivity(cameraSceneIntent);
-//                break;
+            case 1:
+                Intent cameraSceneIntent = new Intent(getApplicationContext(), CameraScene.class);
+                startActivity(cameraSceneIntent);
+                break;
             case 2:
                 Intent emergencySceneIntent = new Intent(getApplicationContext(), EmergencyScene.class);
                 startActivity(emergencySceneIntent);

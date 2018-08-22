@@ -17,8 +17,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.base.CommonDialog;
 import com.msfrc.msfcontent.base.Constants;
 import com.msfrc.msfcontent.base.FirstRow;
 import com.msfrc.msfcontent.base.FirstRowAdapter;
@@ -46,19 +48,12 @@ public class CameraScene  extends AppCompatActivity implements MenuItem.OnMenuIt
         ListView firstRowView;
         firstRow.add(new FirstRow(R.drawable.click, "Click1", "Click2", "Hold"));
         settings = getPreferences(MODE_PRIVATE);
-        boolean firstSingleChecked = settings.getBoolean("FirstSingleCheck",  Constants.clickCameraValue[0][0]);//true);
-        boolean firstDoubleChecked = settings.getBoolean("FirstDoubleCheck", Constants.clickCameraValue[0][1]);//false);
-        boolean firstHoldCheck = settings.getBoolean("FirstHoldCheck", Constants.clickCameraValue[0][2]);//false);
-        boolean secondSingleChecked = settings.getBoolean("SecondSingleCheck", Constants.clickCameraValue[1][0]);//false);
-        boolean secondDoubleChecked = settings.getBoolean("SecondDoubleCheck", Constants.clickCameraValue[1][1]);//true);
-        boolean secondHoldChecked = settings.getBoolean("SecondHoldCheck", Constants.clickCameraValue[1][2]);//false);
-        boolean thirdSingleChecked = settings.getBoolean("ThirdSingleCheck", Constants.clickCameraValue[2][0]);//false);
-        boolean thirdDoubleChecked = settings.getBoolean("ThirdDoubleCheck", Constants.clickCameraValue[2][1]);//false);
-        boolean thirdHoldChecked = settings.getBoolean("ThirdHoldCheck", Constants.clickCameraValue[2][2]);//true);
+        int cameraChecked = settings.getInt("cameraCamera", Constants.cameraCamera);
+
 //        if(Constants.isCameraSave){
-            cameraListData.add(new CameraSceneData(R.drawable.playpause, "PHOTO", firstSingleChecked, firstDoubleChecked, firstHoldCheck));
-            cameraListData.add(new CameraSceneData(R.drawable.forward, "VIDEO", secondSingleChecked, secondDoubleChecked, secondHoldChecked));
-            cameraListData.add(new CameraSceneData(R.drawable.reverse, "SELFIE", thirdSingleChecked, thirdDoubleChecked, thirdHoldChecked));
+            cameraListData.add(new CameraSceneData(R.drawable.playpause, "PHOTO", cameraChecked));
+//            cameraListData.add(new CameraSceneData(R.drawable.forward, "VIDEO", secondSingleChecked, secondDoubleChecked, secondHoldChecked));
+//            cameraListData.add(new CameraSceneData(R.drawable.reverse, "SELFIE", thirdSingleChecked, thirdDoubleChecked, thirdHoldChecked));
 //        }
 //        else {
 //            cameraListData.add(new CameraSceneData(R.drawable.takephoto, "PHOTO", true, false, false));
@@ -104,18 +99,30 @@ public class CameraScene  extends AppCompatActivity implements MenuItem.OnMenuIt
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("FirstSingleCheck", Constants.clickCameraValue[0][0]);//CameraSceneAdapter.isFirstLineSingleChecked);
-        editor.putBoolean("FirstDoubleCheck", Constants.clickCameraValue[0][1]);// CameraSceneAdapter.isFirstLineDoubleChecked);
-        editor.putBoolean("FirstHoldCheck", Constants.clickCameraValue[0][2]);// CameraSceneAdapter.isFirstLineHoldChecked);
-        editor.putBoolean("SecondSingleCheck", Constants.clickCameraValue[1][0]);// CameraSceneAdapter.isSecondLineSingleChecked);
-        editor.putBoolean("SecondDoubleCheck", Constants.clickCameraValue[1][1]);// CameraSceneAdapter.isSecondLineDoubleChecked);
-        editor.putBoolean("SecondHoldCheck", Constants.clickCameraValue[1][2]);// CameraSceneAdapter.isSecondLineHoldChecked);
-        editor.putBoolean("ThirdSingleCheck", Constants.clickCameraValue[2][0]);// CameraSceneAdapter.isThirdLineSingleChecked);
-        editor.putBoolean("ThirdDoubleCheck", Constants.clickCameraValue[2][1]);// CameraSceneAdapter.isThirdLineDoubleChecked);
-        editor.putBoolean("ThirdHoldCheck", Constants.clickCameraValue[2][2]);// CameraSceneAdapter.isThirdLineHoldChecked);
-        editor.commit();
-//        Constants.isCameraSave = true;
+        final CommonDialog alertDialog = new CommonDialog(this, Constants.COMMONDIALOG_TWOBUTTON);
+        alertDialog.setTitle("설정값 저장");
+        alertDialog.setMessage("설정값을 저장하시겠습니까?");
+        alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+        alertDialog.setPositiveButton("확인", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putInt("cameraCamera", Constants.cameraCamera);
+                editor.commit();
+                Toast.makeText(getApplicationContext(),"설정값이 저장되었습니다.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        alertDialog.setNegativeButton("취소", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+
+            }
+        });
+        alertDialog.show();
         return false;
     }
 }

@@ -9,6 +9,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.base.Constants;
 
 import java.util.ArrayList;
 
@@ -21,15 +22,6 @@ public class MannerModeSceneAdapter extends BaseAdapter{
     private RadioButton singleButton;
     private RadioButton doubleButton;
     private RadioButton holdButton;
-    public static boolean isFirstLineSingleChecked=true;
-    public static boolean isSecondLineSingleChecked=false;
-    public static boolean isThirdLineSingleChecked=false;
-    public static boolean isFirstLineDoubleChecked=false;
-    public static boolean isSecondLineDoubleChecked=true;
-    public static boolean isThirdLineDoubleChecked=false;
-    public static boolean isFirstLineHoldChecked=false;
-    public static boolean isSecondLineHoldChecked=false;
-    public static boolean isThirdLineHoldChecked=true;
     public MannerModeSceneAdapter(LayoutInflater inflater, ArrayList<MannerModeSceneData> mannerModeMember){
         this.inflater= inflater;
         this.mannerModeMember = mannerModeMember;
@@ -74,19 +66,14 @@ public class MannerModeSceneAdapter extends BaseAdapter{
                 int position = (int)v.getTag();
                 switch(position) {
                     case 0:
-                        isFirstLineSingleChecked = true;
-                        isFirstLineDoubleChecked = false;
-                        isFirstLineHoldChecked = false;
+                        Constants.mannermodeSilent = Constants.CLICK_SINGLE;
                         break;
                     case 1:
-                        isSecondLineSingleChecked = true;
-                        isSecondLineDoubleChecked = false;
-                        isSecondLineHoldChecked = false;
+                        Constants.mannermodeSound = Constants.CLICK_SINGLE;
                         break;
                     case 2:
-                        isThirdLineSingleChecked = true;
-                        isThirdLineDoubleChecked = false;
-                        isThirdLineHoldChecked = false;
+                        Constants.mannermodeRejectCall = Constants.CLICK_SINGLE;
+                        break;
                 }
             }
         });
@@ -96,19 +83,14 @@ public class MannerModeSceneAdapter extends BaseAdapter{
                 int position = (int)v.getTag();
                 switch(position) {
                     case 0:
-                        isFirstLineDoubleChecked = true;
-                        isFirstLineSingleChecked = false;
-                        isFirstLineHoldChecked = false;
+                        Constants.mannermodeSilent = Constants.CLICK_DOUBLE;
                         break;
                     case 1:
-                        isSecondLineDoubleChecked = true;
-                        isSecondLineSingleChecked = false;
-                        isSecondLineHoldChecked = false;
+                        Constants.mannermodeSound = Constants.CLICK_DOUBLE;
                         break;
                     case 2:
-                        isThirdLineDoubleChecked = true;
-                        isThirdLineSingleChecked = false;
-                        isThirdLineHoldChecked = false;
+                        Constants.mannermodeRejectCall = Constants.CLICK_DOUBLE;
+                        break;
                 }
             }
         });
@@ -118,19 +100,14 @@ public class MannerModeSceneAdapter extends BaseAdapter{
                 int position = (int)v.getTag();
                 switch(position) {
                     case 0:
-                        isFirstLineHoldChecked = true;
-                        isFirstLineDoubleChecked = false;
-                        isFirstLineSingleChecked = false;
+                        Constants.mannermodeSilent = Constants.CLICK_HOLD;
                         break;
                     case 1:
-                        isSecondLineHoldChecked = true;
-                        isSecondLineDoubleChecked = false;
-                        isSecondLineSingleChecked = false;
+                        Constants.mannermodeSound = Constants.CLICK_HOLD;
                         break;
                     case 2:
-                        isThirdLineHoldChecked = true;
-                        isThirdLineSingleChecked = false;
-                        isThirdLineDoubleChecked = false;
+                        Constants.mannermodeRejectCall = Constants.CLICK_HOLD;
+                        break;
                 }
             }
         });

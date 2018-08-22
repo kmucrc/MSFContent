@@ -36,6 +36,7 @@
     <uses-feature android:name="android.hardware.camera.raw" />
     <uses-feature android:name="android.hardware.camera2"/>
     <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
 
 
     <application

@@ -16,6 +16,8 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -59,6 +61,8 @@ import com.msfrc.msfcontent.home.UIScene;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ConnectionScene extends AppCompatActivity implements LocationListener{
 
@@ -66,6 +70,10 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     private static final String TAG = "ConnectionScene";
     public static AudioManager mAudioManager;
     public static Button start;
+
+    private static Camera mCamera;
+    private static CameraManager camManager;
+    private static Camera.Parameters parameters;
 
     //Bluetooth
     static BluetoothAdapter mBluetoothAdapter;
@@ -443,69 +451,163 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     public static void actions(String message) {//throws ClassNotFoundException, NoSuchMethodException, RemoteException, IllegalAccessException, InvocationTargetException {
 
         Log.d(TAG, "actions function called : "+message);
-        if(message.equals("SingleClick")){
-            if(Constants.clickCheck[0]){//Constants.musicPage){
-                if(MusicSceneAdapter.isFirstLineSingleChecked) {
+
+        if(Constants.clickIndex == Constants.CLICK_MUSIC_PLAY){//Constants.musicPage){
+            if(message.equals("SingleClick")) {
+                if (Constants.musicPlay == Constants.CLICK_SINGLE) {
                     playMusic();
-                    Log.d(TAG, "actions function called");
+                    Log.d(TAG, "SingleClick playMusic");
                 }
-                else if(MusicSceneAdapter.isSecondLineSingleChecked){
+            } else if(message.equals("DoubleClick")) {
+                if (Constants.musicForward == Constants.CLICK_DOUBLE) {
                     nextMusic();
+                    Log.d(TAG, "SingleClick nextMusic");
                 }
-                else{
+            } else if(message.equals("Hold")) {
+                if (Constants.musicReverse == Constants.CLICK_HOLD) {
                     prevMusic();
+                    Log.d(TAG, "SingleClick prevMusic");
                 }
             }
-            else if(Constants.clickCheck[1]){//Constants.clickCameraPage){
-                if(Constants.clickCameraValue[0][0]){//CameraSceneAdapter.isFirstLineSingleChecked) {
+
+        }
+        else if(Constants.clickIndex == Constants.CLICK_CAMERA){//Constants.clickCameraPage){
+            if(message.equals("SingleClick")) {
+                if (Constants.cameraCamera == Constants.CLICK_SINGLE) {
                     captureCamera();
-                    Log.d(TAG, "capture called");
                 }
-                else if(Constants.clickCameraValue[1][0]){//CameraSceneAdapter.isSecondLineSingleChecked){
-                    videoCamera();
+            } else if(message.equals("DoubleClick")) {
+                if (Constants.cameraCamera == Constants.CLICK_DOUBLE) {
+                    captureCamera();
                 }
-                else if(Constants.clickCameraValue[2][0]){
-                    selfieCamera();
+            } else if(message.equals("Hold")) {
+                if (Constants.cameraCamera == Constants.CLICK_HOLD) {
+                    captureCamera();
                 }
             }
-            else if(Constants.clickCheck[2]){//Constants.emergencyPage){
+        }
+        else if(Constants.clickIndex == Constants.CLICK_EMERGENCY){//Constants.emergencyPage){
+            if(message.equals("SingleClick")) {
+                sendSMS();
+            } else if(message.equals("DoubleClick")) {
+                sendSMS();
+            } else if(message.equals("Hold")) {
                 sendSMS();
             }
-            else if(Constants.clickCheck[3]){//Constants.mannermodePage){
-                if(MannerModeSceneAdapter.isFirstLineSingleChecked && mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+        }
+        else if(Constants.clickIndex == Constants.CLICK_MANNER_MODE){//Constants.mannermodePage){
+            if(message.equals("SingleClick")) {
+                if (Constants.mannermodeSilent == Constants.CLICK_SINGLE && mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
                     setSilentMode();
-                }
-                else if(MannerModeSceneAdapter.isSecondLineSingleChecked){
+                } else if (Constants.mannermodeSound == Constants.CLICK_SINGLE) {
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                } else if (Constants.mannermodeRejectCall == Constants.CLICK_SINGLE) {
+                    rejectCall();
                 }
-                else{
+            } else if(message.equals("DoubleClick")) {
+                if (Constants.mannermodeSilent == Constants.CLICK_DOUBLE && mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+                    setSilentMode();
+                } else if (Constants.mannermodeSound == Constants.CLICK_DOUBLE) {
+                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                } else if (Constants.mannermodeRejectCall == Constants.CLICK_DOUBLE) {
+                    rejectCall();
+                }
+            } else if(message.equals("Hold")) {
+                if (Constants.mannermodeSilent == Constants.CLICK_HOLD && mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+                    setSilentMode();
+                } else if (Constants.mannermodeSound == Constants.CLICK_HOLD) {
+                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                } else if (Constants.mannermodeRejectCall == Constants.CLICK_HOLD) {
                     rejectCall();
                 }
             }
         }
+        else if(Constants.clickIndex == Constants.CLICK_FIND_PHONE) {
+            if(message.equals("SingleClick")) {
+                if (Constants.findphoneFindPhone == Constants.CLICK_SINGLE) {
+                    findPhone();
+                }
+            } else if(message.equals("DoubleClick")) {
+                if (Constants.findphoneFindPhone == Constants.CLICK_DOUBLE) {
+                    findPhone();
+                }
+            } else if(message.equals("Hold")) {
+                if (Constants.findphoneFindPhone == Constants.CLICK_HOLD) {
+                    findPhone();
+                }
+            }
+        }
+        else if(Constants.clickIndex == Constants.CLICK_LIGHT_CONTROL) {
+            if(message.equals("SingleClick")) {
+                if (Constants.lightLight == Constants.CLICK_SINGLE) {
+                    if(Constants.light)
+                        turnOffLight();
+                    else turnOnLight();
+                }
+            } else if(message.equals("DoubleClick")) {
+                if (Constants.lightLight == Constants.CLICK_DOUBLE) {
+                    if(Constants.light)
+                        turnOffLight();
+                    else turnOnLight();
+                }
+            } else if(message.equals("Hold")) {
+                if (Constants.lightLight == Constants.CLICK_HOLD) {
+                    if(Constants.light)
+                        turnOffLight();
+                    else turnOnLight();
+                }
+            }
+        }
+        else if(Constants.clickIndex == Constants.CLICK_RECORD_VOICE) {
+            if(message.equals("SingleClick")) {
+                if (Constants.voicerecordRecord == Constants.CLICK_SINGLE) {
+                    if(Constants.record)
+                        stopRecordingVoice();
+                    else recordingVoice();
+                }
+            } else if(message.equals("DoubleClick")) {
+                if (Constants.voicerecordRecord == Constants.CLICK_DOUBLE) {
+                    if(Constants.record)
+                        stopRecordingVoice();
+                    else recordingVoice();
+                }
+            } else if(message.equals("Hold")) {
+                if (Constants.voicerecordRecord == Constants.CLICK_HOLD) {
+                    if(Constants.record)
+                        stopRecordingVoice();
+                    else recordingVoice();
+                }
+            }
+        }
+
+        /*
         else if(message.equals("DoubleClick")){
+            Log.e("eleutheria", "action DoubleClick");
             if(Constants.musicPage){
                 if(MusicSceneAdapter.isFirstLineDoubleChecked){
                     playMusic();
+                    Log.d(TAG, "DoubleClick playMusic");
                 }
                 else if(MusicSceneAdapter.isSecondLineDoubleChecked){
                     nextMusic();
+                    Log.d(TAG, "DoubleClick nextMusic");
                 }
                 else{
                     prevMusic();
+                    Log.d(TAG, "DoubleClick prevMusic");
                 }
             }
-            else if(Constants.clickCheck[1]){
-                if(Constants.clickCameraValue[0][1]){//CameraSceneAdapter.isFirstLineDoubleChecked){
-                    captureCamera();
-                }
-                else if(Constants.clickCameraValue[1][1]){//CameraSceneAdapter.isSecondLineDoubleChecked){
-                    videoCamera();
-                }
-                else if(Constants.clickCameraValue[2][1]){
-                    selfieCamera();
-                }
-            }
+//            else if(Constants.clickCheck[1]){
+//                if(Constants.clickCameraValue[0][1]){//CameraSceneAdapter.isFirstLineDoubleChecked){
+//                    captureCamera();
+//                }
+//                else if(Constants.clickCameraValue[1][1]){//CameraSceneAdapter.isSecondLineDoubleChecked){
+//                    videoCamera();
+//                }
+//                else if(Constants.clickCameraValue[2][1]){
+//                    selfieCamera();
+//                }
+//            }
             else if(Constants.emergencyPage){
                 if(EmergencySceneAdapter.isFirstLineDoubleChecked){
                     sendSMS();
@@ -523,6 +625,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                 }
             }
         }
+
         else if(message.equals("Hold")){
             if(Constants.musicPage){
                 if(MusicSceneAdapter.isFirstLineHoldChecked){
@@ -535,17 +638,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                     prevMusic();
                 }
             }
-            else if(Constants.clickCheck[1]){
-                if(Constants.clickCameraValue[0][2]){//CameraSceneAdapter.isFirstLineHoldChecked){
-                    captureCamera();
-                }
-                else if(Constants.clickCameraValue[1][2]){//CameraSceneAdapter.isSecondLineHoldChecked){
-                    videoCamera();
-                }
-                else if(Constants.clickCameraValue[0][2]){
-                    selfieCamera();
-                }
-            }
+//            else if(Constants.clickCheck[1]){
+//                if(Constants.clickCameraValue[0][2]){//CameraSceneAdapter.isFirstLineHoldChecked){
+//                    captureCamera();
+//                }
+//                else if(Constants.clickCameraValue[1][2]){//CameraSceneAdapter.isSecondLineHoldChecked){
+//                    videoCamera();
+//                }
+//                else if(Constants.clickCameraValue[0][2]){
+//                    selfieCamera();
+//                }
+//            }
             else if(Constants.emergencyPage){
                 if(EmergencySceneAdapter.isFirstLineHoldChecked){
                     sendSMS();
@@ -562,7 +665,9 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                     rejectCall();
                 }
             }
-        }if(Constants.findPhonePage||Constants.clickCheck[4]){
+        }
+
+        if(Constants.findPhonePage||Constants.clickCheck[4]){
             findPhone();
         }
         if(Constants.lightPage||Constants.clickCheck[5]){
@@ -629,26 +734,63 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             }
             catch(Exception e){
             }
-        }
+        }*/
     }
 
     //추가기능 light
     public static void turnOnLight(){
         Constants.light = true;
-        Camera camera = Camera.open();
-        Camera.Parameters p = camera.getParameters();
-        p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-        camera.setParameters(p);
-        camera.startPreview();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                camManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+                String cameraId = null; // Usually front camera is at 0 position.
+                if (camManager != null) {
+                    cameraId = camManager.getCameraIdList()[0];
+                    camManager.setTorchMode(cameraId, true);
+                }
+            } catch (CameraAccessException e) {
+                Log.e(TAG, e.toString());
+            }
+        } else {
+            mCamera = Camera.open();
+            parameters = mCamera.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            mCamera.setParameters(parameters);
+            mCamera.startPreview();
+        }
+//        Camera camera = Camera.open();
+//        Camera.Parameters p = camera.getParameters();
+//        p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+//        camera.setParameters(p);
+//        camera.startPreview();
     }
     public static void turnOffLight(){
         Constants.light = false;
-        Camera camera = Camera.open();
-        Camera.Parameters p = camera.getParameters();
-        p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-        camera.setParameters(p);
-        camera.stopPreview();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                String cameraId;
+                camManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+                if (camManager != null) {
+                    cameraId = camManager.getCameraIdList()[0]; // Usually front camera is at 0 position.
+                    camManager.setTorchMode(cameraId, false);
+                }
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+        } else {
+            mCamera = Camera.open();
+            parameters = mCamera.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            mCamera.setParameters(parameters);
+            mCamera.stopPreview();
+        }
+//        Camera camera = Camera.open();
+//        Camera.Parameters p = camera.getParameters();
+//        p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+//        camera.setParameters(p);
+//        camera.stopPreview();
     }
+    final private static String RECORDED_DIR = Environment.getExternalStorageDirectory().getAbsolutePath();
     final private static String RECORDED_FILE = Environment.getExternalStorageDirectory().getAbsolutePath()+"/recorded.mp4";
     //추가 녹음
     public static void recordingVoice(){
@@ -657,36 +799,76 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             mRecorder.release();
             mRecorder = null;
         }
-        Constants.record = true;
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        boolean isMakeDir = createRecordDir(RECORDED_DIR);
+
+        if(isMakeDir) {
+            String currentDateandTime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+            Log.e("eleutheria", "currentTime : " + currentDateandTime);
+            Constants.record = true;
+            mRecorder = new MediaRecorder();
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 //        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 //        String mFileName = context.getExternalCacheDir().getAbsolutePath();
 //        mFileName += "/audiorecordtest.3gp";
 //        mRecorder.setOutputFile(mFileName);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
 //        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mRecorder.setOutputFile(RECORDED_FILE);
-        try {
-            Toast.makeText(mActivity.getApplicationContext(),"녹음을 시작합니다.",
-                    Toast.LENGTH_SHORT).show();
-            mRecorder.prepare();
-            Log.e(TAG, "start() failed");
-            mRecorder.start();
-        } catch (IOException e) {
-            Log.e(TAG, "prepare() failed");
-        }
+            mRecorder.setOutputFile(RECORDED_DIR + "/Record_" + currentDateandTime + ".mp4");
+            //mRecorder.setOutputFile(RECORDED_FILE);
 
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Toast.makeText(mActivity.getApplicationContext(), "녹음을 시작합니다.",
+                                Toast.LENGTH_SHORT).show();
+                        mRecorder.prepare();
+                        Log.e(TAG, "start() failed");
+                        mRecorder.start();
+                    } catch (IOException e) {
+                        Log.e(TAG, "prepare() failed");
+                    }
+                }
+            });
+        } else {
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mActivity.getApplicationContext(), "폴더 생성에 실패하였습니다.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
+
+    private static boolean createRecordDir(String recordedDir) {
+        boolean ret = true;
+
+        File file = new File(Environment.getExternalStorageDirectory(), recordedDir);
+        if (!file.exists()) {
+            if (!file.mkdirs()) {
+                Log.e("TravellerLog :: ", "Problem creating Image folder");
+                ret = false;
+            }
+        }
+        return ret;
+    }
+
     public static void stopRecordingVoice(){
         Constants.record = false;
         if(mRecorder==null) return;
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
-        Toast.makeText(mActivity.getApplicationContext(),"녹음이 중지되었습니다.",
-                Toast.LENGTH_SHORT).show();
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(mActivity.getApplicationContext(),"녹음이 중지되었습니다.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
     static MediaPlayer player;
     public static void playRecordingVoice(){
@@ -698,7 +880,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                 Toast.LENGTH_SHORT).show();
         try{
             player = new MediaPlayer();
-            player.setDataSource(RECORDED_FILE);
+            player.setDataSource(RECORDED_DIR);
             player.prepare();
             player.start();
         }catch (Exception e){}
@@ -767,20 +949,20 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 //        Constants.selfiePage = false;
         context.startActivity(cameraIntent);
     }
-    public static void selfieCamera(){
-        Intent cameraIntent = new Intent(context, SelfieCamera.class);
-//        Constants.selfiePage = true;
-//        Constants.cameraPage = false;
-//        Constants.videoPage = false;
-        context.startActivity(cameraIntent);
-    }
-    public static void videoCamera(){
-        Intent cameraIntent = new Intent(context, VideoActivity.class);
-//        Constants.videoPage = true;
-//        Constants.cameraPage = false;
-//        Constants.selfiePage = false;
-        context.startActivity(cameraIntent);
-    }
+//    public static void selfieCamera(){
+//        Intent cameraIntent = new Intent(context, SelfieCamera.class);
+////        Constants.selfiePage = true;
+////        Constants.cameraPage = false;
+////        Constants.videoPage = false;
+//        context.startActivity(cameraIntent);
+//    }
+//    public static void videoCamera(){
+//        Intent cameraIntent = new Intent(context, VideoActivity.class);
+////        Constants.videoPage = true;
+////        Constants.cameraPage = false;
+////        Constants.selfiePage = false;
+//        context.startActivity(cameraIntent);
+//    }
     public static void captureCamera() {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "My demo image");
@@ -792,13 +974,13 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
 
     public static void sendSMS() {
-        Log.d(TAG, "Send SMS");
-        String phoneNumber = "01063985274";//사용자 휴대폰 번호
-        String message = "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude;
-
-        SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage(phoneNumber, null, message, null, null);
-        Toast.makeText(context, "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude, Toast.LENGTH_LONG).show();
+//        Log.d(TAG, "Send SMS");
+//        String phoneNumber = "01063985274";//사용자 휴대폰 번호
+//        String message = "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude;
+//
+//        SmsManager smsManager = SmsManager.getDefault();
+//        smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+//        Toast.makeText(context, "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude, Toast.LENGTH_LONG).show();
 
     }
     public void onLocationChanged(Location location) {
@@ -883,17 +1065,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     public void onStartButtonClicked(View v){
         connectDevice();
     }
-    int a = 0;
-    public void onTestButtonClicked(View v){
-//        if(Constants.record)
-//            stopRecordingVoice();
-//        else recordingVoice();
-        if(a%4==0) recordingVoice();
-        if(a%4==1) stopRecordingVoice();
-        if(a%4==2) playRecordingVoice();
-        if(a%4==3) playStopRecordingVoice();
-        a++;
-    }
+//    int a = 0;
+//    public void onTestButtonClicked(View v){
+////        if(Constants.record)
+////            stopRecordingVoice();
+////        else recordingVoice();
+//        if(a%4==0) recordingVoice();
+//        if(a%4==1) stopRecordingVoice();
+//        if(a%4==2) playRecordingVoice();
+//        if(a%4==3) playStopRecordingVoice();
+//        a++;
+//    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.SyncStateContract;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,8 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.base.CommonDialog;
+import com.msfrc.msfcontent.base.CommonUtil;
 import com.msfrc.msfcontent.base.Constants;
 import com.msfrc.msfcontent.base.FirstRowAdapter;
 import com.msfrc.msfcontent.base.FirstRow;
@@ -37,26 +41,16 @@ public class MannerModeScene extends AppCompatActivity implements MenuItem.OnMen
         ListView emergencyView;
         ListView firstRowView;
         settings = getPreferences(MODE_PRIVATE);
-        boolean firstSingleChecked = settings.getBoolean("FirstSingleCheck", true);
-        boolean firstDoubleChecked = settings.getBoolean("FirstDoubleCheck", false);
-        boolean firstHoldCheck = settings.getBoolean("FirstHoldCheck", false);
-        boolean secondSingleChecked = settings.getBoolean("SecondSingleCheck", false);
-        boolean secondDoubleChecked = settings.getBoolean("SecondDoubleCheck", true);
-        boolean secondHoldChecked = settings.getBoolean("SecondHoldCheck", false);
-        boolean thirdSingleChecked = settings.getBoolean("ThirdSingleCheck", false);
-        boolean thirdDoubleChecked = settings.getBoolean("ThirdDoubleCheck", false);
-        boolean thirdHoldChecked = settings.getBoolean("ThirdHoldCheck", true);
+        int silentChecked = settings.getInt("mannermodeSilent", Constants.mannermodeSilent);
+        int soundChecked = settings.getInt("mannermodeSound", Constants.mannermodeSound);
+        int rejectCallChecked = settings.getInt("mannermodeRejectCall", Constants.mannermodeRejectCall);
         firstRow.add(new FirstRow(R.drawable.click, "Click1", "Click2", "Hold"));
-        if(Constants.isMannermodeSave){
-            mannerModeListData.add(new MannerModeSceneData(R.drawable.mannermode, "SILENT MODE", firstSingleChecked, firstDoubleChecked, firstHoldCheck));
-            mannerModeListData.add(new MannerModeSceneData(R.drawable.soundmode, "SOUND MODE", secondSingleChecked, secondDoubleChecked, secondHoldChecked));
-            mannerModeListData.add(new MannerModeSceneData(R.drawable.rejectcall, "REJECT CALL", thirdSingleChecked, thirdDoubleChecked, thirdHoldChecked));
-        }
-        else {
-            mannerModeListData.add(new MannerModeSceneData(R.drawable.mannermode, "SILENT MODE", true, false, false));
-            mannerModeListData.add(new MannerModeSceneData(R.drawable.soundmode, "SOUND MODE", false, true, false));
-            mannerModeListData.add(new MannerModeSceneData(R.drawable.rejectcall, "REJECT CALL", false, false, true));
-        }
+
+        mannerModeListData.add(new MannerModeSceneData(R.drawable.mannermode, "SILENT MODE", silentChecked));
+        mannerModeListData.add(new MannerModeSceneData(R.drawable.soundmode, "SOUND MODE", soundChecked));
+        mannerModeListData.add(new MannerModeSceneData(R.drawable.rejectcall, "REJECT CALL", rejectCallChecked));
+
+
         firstRowView = (ListView)findViewById(R.id.first);
         emergencyView = (ListView)findViewById(R.id.musicList);
         FirstRowAdapter firstAdapter = new FirstRowAdapter(getLayoutInflater(), firstRow);
@@ -97,18 +91,49 @@ public class MannerModeScene extends AppCompatActivity implements MenuItem.OnMen
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("FirstSingleCheck", MannerModeSceneAdapter.isFirstLineSingleChecked);
-        editor.putBoolean("FirstDoubleCheck", MannerModeSceneAdapter.isFirstLineDoubleChecked);
-        editor.putBoolean("FirstHoldCheck", MannerModeSceneAdapter.isFirstLineHoldChecked);
-        editor.putBoolean("SecondSingleCheck", MannerModeSceneAdapter.isSecondLineSingleChecked);
-        editor.putBoolean("SecondDoubleCheck", MannerModeSceneAdapter.isSecondLineDoubleChecked);
-        editor.putBoolean("SecondHoldCheck", MannerModeSceneAdapter.isSecondLineHoldChecked);
-        editor.putBoolean("ThirdSingleCheck", MannerModeSceneAdapter.isThirdLineSingleChecked);
-        editor.putBoolean("ThirdDoubleCheck", MannerModeSceneAdapter.isThirdLineDoubleChecked);
-        editor.putBoolean("ThirdHoldCheck", MannerModeSceneAdapter.isThirdLineHoldChecked);
-        editor.commit();
-        Constants.isMannermodeSave = true;
+
+        CommonUtil commonUtil = new CommonUtil();
+        if (commonUtil.getDuplicatesCheck(Constants.mannermodeSilent, Constants.mannermodeSound, Constants.mannermodeRejectCall)) {
+            final CommonDialog alertDialog = new CommonDialog(this, Constants.COMMONDIALOG_TWOBUTTON);
+            alertDialog.setTitle("설정값 저장");
+            alertDialog.setMessage("설정값을 저장하시겠습니까?");
+            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            alertDialog.setPositiveButton("확인", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putInt("mannermodeSilent", Constants.mannermodeSilent);
+                    editor.putInt("mannermodeSound", Constants.mannermodeSound);
+                    editor.putInt("mannermodeRejectCall", Constants.mannermodeRejectCall);
+                    editor.commit();
+                    Toast.makeText(getApplicationContext(),"설정값이 저장되었습니다.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            alertDialog.setNegativeButton("취소", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+
+                }
+            });
+            alertDialog.show();
+
+        } else {
+            final CommonDialog alertDialog = new CommonDialog(this, Constants.COMMONDIALOG_ONEBUTTON);
+            alertDialog.setTitle("설정값 중복");
+            alertDialog.setMessage("설정값이 중복되었습니다.\n확인 후 다시 저장 해 주세요.");
+            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            alertDialog.setPositiveButton("확인", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+            alertDialog.show();
+        }
         return false;
     }
 }

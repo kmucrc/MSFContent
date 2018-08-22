@@ -24,15 +24,6 @@ public class CameraSceneAdapter extends BaseAdapter{
     private RadioButton singleButton;
     private RadioButton doubleButton;
     private RadioButton holdButton;
-//    public static boolean isFirstLineSingleChecked=true;
-//    public static boolean isSecondLineSingleChecked=false;
-//    public static boolean isThirdLineSingleChecked=false;
-//    public static boolean isFirstLineDoubleChecked=false;
-//    public static boolean isSecondLineDoubleChecked=true;
-//    public static boolean isThirdLineDoubleChecked=false;
-//    public static boolean isFirstLineHoldChecked=false;
-//    public static boolean isSecondLineHoldChecked=false;
-//    public static boolean isThirdLineHoldChecked=true;
     public CameraSceneAdapter(LayoutInflater inflater, ArrayList<CameraSceneData> cameraMember){
         this.inflater= inflater;
         this.cameraMember = cameraMember;
@@ -77,28 +68,8 @@ public class CameraSceneAdapter extends BaseAdapter{
                 int position = (int)v.getTag();
                 switch(position) {
                     case 0:
-//                        isFirstLineSingleChecked = true;
-//                        isFirstLineDoubleChecked = false;
-//                        isFirstLineHoldChecked = false;
-                        Constants.clickCameraValue[0][0]=true;
-                        Constants.clickCameraValue[0][1]=false;
-                        Constants.clickCameraValue[0][2]=false;
+                        Constants.cameraCamera = Constants.CLICK_SINGLE;
                         break;
-                    case 1:
-//                        isSecondLineSingleChecked = true;
-//                        isSecondLineDoubleChecked = false;
-//                        isSecondLineHoldChecked = false;
-                        Constants.clickCameraValue[1][0]=true;
-                        Constants.clickCameraValue[1][1]=false;
-                        Constants.clickCameraValue[1][2]=false;
-                        break;
-                    case 2:
-//                        isThirdLineSingleChecked = true;
-//                        isThirdLineDoubleChecked = false;
-//                        isThirdLineHoldChecked = false;
-                        Constants.clickCameraValue[2][0]=true;
-                        Constants.clickCameraValue[2][1]=false;
-                        Constants.clickCameraValue[2][2]=false;
                 }
             }
         });
@@ -108,28 +79,8 @@ public class CameraSceneAdapter extends BaseAdapter{
                 int position = (int)v.getTag();
                 switch(position) {
                     case 0:
-//                        isFirstLineDoubleChecked = true;
-//                        isFirstLineSingleChecked = false;
-//                        isFirstLineHoldChecked = false;
-                        Constants.clickCameraValue[0][0]=false;
-                        Constants.clickCameraValue[0][1]=true;
-                        Constants.clickCameraValue[0][2]=false;
+                        Constants.cameraCamera = Constants.CLICK_DOUBLE;
                         break;
-                    case 1:
-//                        isSecondLineDoubleChecked = true;
-//                        isSecondLineSingleChecked = false;
-//                        isSecondLineHoldChecked = false;
-                        Constants.clickCameraValue[1][0]=false;
-                        Constants.clickCameraValue[1][1]=true;
-                        Constants.clickCameraValue[1][2]=false;
-                        break;
-                    case 2:
-//                        isThirdLineDoubleChecked = true;
-//                        isThirdLineSingleChecked = false;
-//                        isThirdLineHoldChecked = false;
-                        Constants.clickCameraValue[2][0]=false;
-                        Constants.clickCameraValue[2][1]=true;
-                        Constants.clickCameraValue[2][2]=false;
                 }
             }
         });
@@ -139,28 +90,8 @@ public class CameraSceneAdapter extends BaseAdapter{
                 int position = (int)v.getTag();
                 switch(position) {
                     case 0:
-//                        isFirstLineHoldChecked = true;
-//                        isFirstLineDoubleChecked = false;
-//                        isFirstLineSingleChecked = false;
-                        Constants.clickCameraValue[0][0]=false;
-                        Constants.clickCameraValue[0][1]=false;
-                        Constants.clickCameraValue[0][2]=true;
+                        Constants.cameraCamera = Constants.CLICK_HOLD;
                         break;
-                    case 1:
-//                        isSecondLineHoldChecked = true;
-//                        isSecondLineDoubleChecked = false;
-//                        isSecondLineSingleChecked = false;
-                        Constants.clickCameraValue[1][0]=false;
-                        Constants.clickCameraValue[1][1]=false;
-                        Constants.clickCameraValue[1][2]=true;
-                        break;
-                    case 2:
-//                        isThirdLineHoldChecked = true;
-//                        isThirdLineSingleChecked = false;
-//                        isThirdLineDoubleChecked = false;
-                        Constants.clickCameraValue[2][0]=false;
-                        Constants.clickCameraValue[2][1]=false;
-                        Constants.clickCameraValue[2][2]=true;
                 }
             }
         });

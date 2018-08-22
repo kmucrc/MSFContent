@@ -53,7 +53,7 @@ public class ClickScene extends AppCompatActivity implements AdapterView.OnItemC
 
         listView = (ListView)findViewById(R.id.list);
         listView.setChoiceMode(listView.CHOICE_MODE_SINGLE);
-        ClickAdapter mAdapter = new ClickAdapter(getLayoutInflater(), datas);
+        ClickAdapter mAdapter = new ClickAdapter(this, getLayoutInflater(), datas);
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(this);
         setCustomerActionBar();

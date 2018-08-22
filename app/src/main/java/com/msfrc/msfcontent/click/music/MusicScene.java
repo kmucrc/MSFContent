@@ -16,8 +16,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.base.CommonDialog;
+import com.msfrc.msfcontent.base.CommonUtil;
 import com.msfrc.msfcontent.base.Constants;
 import com.msfrc.msfcontent.base.FirstRow;
 import com.msfrc.msfcontent.base.FirstRowAdapter;
@@ -41,26 +44,15 @@ public class MusicScene extends AppCompatActivity implements MenuItem.OnMenuItem
         ListView musicView;
         ListView firstRowView;
         settings = getPreferences(MODE_PRIVATE);
-        boolean firstSingleChecked = settings.getBoolean("FirstSingleCheck", true);
-        boolean firstDoubleChecked = settings.getBoolean("FirstDoubleCheck", false);
-        boolean firstHoldCheck = settings.getBoolean("FirstHoldCheck", false);
-        boolean secondSingleChecked = settings.getBoolean("SecondSingleCheck", false);
-        boolean secondDoubleChecked = settings.getBoolean("SecondDoubleCheck", true);
-        boolean secondHoldChecked = settings.getBoolean("SecondHoldCheck", false);
-        boolean thirdSingleChecked = settings.getBoolean("ThirdSingleCheck", false);
-        boolean thirdDoubleChecked = settings.getBoolean("ThirdDoubleCheck", false);
-        boolean thirdHoldChecked = settings.getBoolean("ThirdHoldCheck", true);
+        int playChecked = settings.getInt("musicPlay", Constants.musicPlay);
+        int forwardChecked = settings.getInt("musicForward", Constants.musicForward);
+        int reverseChecked = settings.getInt("musicReverse", Constants.musicReverse);
         firstRow.add(new FirstRow(R.drawable.click, "Click1", "Click2", "Hold"));
-        if(Constants.isMusicSave){
-            musicListData.add(new MusicSceneData(R.drawable.playpause, "PLAY\nPAUSE", firstSingleChecked, firstDoubleChecked, firstHoldCheck));
-            musicListData.add(new MusicSceneData(R.drawable.forward, "FORWARD", secondSingleChecked, secondDoubleChecked, secondHoldChecked));
-            musicListData.add(new MusicSceneData(R.drawable.reverse, "REVERSE", thirdSingleChecked, thirdDoubleChecked, thirdHoldChecked));
-        }
-        else {
-            musicListData.add(new MusicSceneData(R.drawable.playpause, "PLAY\nPAUSE", true, false, false));
-            musicListData.add(new MusicSceneData(R.drawable.forward, "FORWARD", false, true, false));
-            musicListData.add(new MusicSceneData(R.drawable.reverse, "REVERSE", false, false, true));
-        }
+
+        musicListData.add(new MusicSceneData(R.drawable.playpause, "PLAY\nPAUSE",playChecked));
+        musicListData.add(new MusicSceneData(R.drawable.forward, "FORWARD", forwardChecked));
+        musicListData.add(new MusicSceneData(R.drawable.reverse, "REVERSE", reverseChecked));
+
         firstRowView = (ListView)findViewById(R.id.first);
         musicView = (ListView)findViewById(R.id.musicList);
         FirstRowAdapter firstAdapter = new FirstRowAdapter(getLayoutInflater(), firstRow);
@@ -124,27 +116,49 @@ public class MusicScene extends AppCompatActivity implements MenuItem.OnMenuItem
     }
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        Log.d(TAG, "FirstLineSingle "+MusicSceneAdapter.isFirstLineSingleChecked);
-        Log.d(TAG, "FirstLineDouble "+MusicSceneAdapter.isFirstLineDoubleChecked);
-        Log.d(TAG, "FirstLineHold "+MusicSceneAdapter.isFirstLineHoldChecked);
-        Log.d(TAG, "SecondLineSingle "+MusicSceneAdapter.isSecondLineSingleChecked);
-        Log.d(TAG, "SecondLineSingle "+MusicSceneAdapter.isSecondLineDoubleChecked);
-        Log.d(TAG, "SecondLineSingle "+MusicSceneAdapter.isSecondLineHoldChecked);
-        Log.d(TAG, "ThirdLineSingle "+MusicSceneAdapter.isThirdLineSingleChecked);
-        Log.d(TAG, "ThirdLineSingle "+MusicSceneAdapter.isThirdLineDoubleChecked);
-        Log.d(TAG, "ThirdLineSingle "+MusicSceneAdapter.isThirdLineHoldChecked);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("FirstSingleCheck", MusicSceneAdapter.isFirstLineSingleChecked);
-        editor.putBoolean("FirstDoubleCheck", MusicSceneAdapter.isFirstLineDoubleChecked);
-        editor.putBoolean("FirstHoldCheck", MusicSceneAdapter.isFirstLineHoldChecked);
-        editor.putBoolean("SecondSingleCheck", MusicSceneAdapter.isSecondLineSingleChecked);
-        editor.putBoolean("SecondDoubleCheck", MusicSceneAdapter.isSecondLineDoubleChecked);
-        editor.putBoolean("SecondHoldCheck", MusicSceneAdapter.isSecondLineHoldChecked);
-        editor.putBoolean("ThirdSingleCheck", MusicSceneAdapter.isThirdLineSingleChecked);
-        editor.putBoolean("ThirdDoubleCheck", MusicSceneAdapter.isThirdLineDoubleChecked);
-        editor.putBoolean("ThirdHoldCheck", MusicSceneAdapter.isThirdLineHoldChecked);
-        editor.commit();
-        Constants.isMusicSave = true;
+
+        CommonUtil commonUtil = new CommonUtil();
+        if (commonUtil.getDuplicatesCheck(Constants.musicPlay, Constants.musicForward, Constants.musicReverse)) {
+            final CommonDialog alertDialog = new CommonDialog(this, Constants.COMMONDIALOG_TWOBUTTON);
+            alertDialog.setTitle("설정값 저장");
+            alertDialog.setMessage("설정값을 저장하시겠습니까?");
+            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            alertDialog.setPositiveButton("확인", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putInt("musicPlay", Constants.musicPlay);
+                    editor.putInt("musicForward", Constants.musicForward);
+                    editor.putInt("musicReverse", Constants.musicReverse);
+                    editor.commit();
+                    Toast.makeText(getApplicationContext(),"설정값이 저장되었습니다.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            alertDialog.setNegativeButton("취소", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+
+                }
+            });
+            alertDialog.show();
+
+        } else {
+            final CommonDialog alertDialog = new CommonDialog(this, Constants.COMMONDIALOG_ONEBUTTON);
+            alertDialog.setTitle("설정값 중복");
+            alertDialog.setMessage("설정값이 중복되었습니다.\n확인 후 다시 저장 해 주세요.");
+            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            alertDialog.setPositiveButton("확인", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+            alertDialog.show();
+        }
         return false;
     }
 }

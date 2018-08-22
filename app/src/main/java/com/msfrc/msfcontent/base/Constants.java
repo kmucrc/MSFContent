@@ -24,6 +24,44 @@ public class Constants {
     public static final int CAMERA_CAPTURE = 12;
     public static final String DEVICE_NAME = "device_name";
 
+
+    // CLICK INDEX
+
+    public static final int CLICK_MUSIC_PLAY = 0;
+    public static final int CLICK_CAMERA = 1;
+    public static final int CLICK_EMERGENCY = 2;
+    public static final int CLICK_MANNER_MODE = 3;
+    public static final int CLICK_FIND_PHONE = 4;
+    public static final int CLICK_LIGHT_CONTROL = 5;
+    public static final int CLICK_RECORD_VOICE =6;
+    public static int clickIndex = CLICK_MUSIC_PLAY;
+
+    public static final int CLICK_SINGLE = 0;
+    public static final int CLICK_DOUBLE = 1;
+    public static final int CLICK_HOLD = 2;
+
+    public static int mannermodeSilent = CLICK_SINGLE;
+    public static int mannermodeSound = CLICK_DOUBLE;
+    public static int mannermodeRejectCall = CLICK_HOLD;
+    public static int cameraCamera = CLICK_SINGLE;
+    public static int findphoneFindPhone = CLICK_SINGLE;
+    public static int lightLight = CLICK_SINGLE;
+    public static int voicerecordRecord = CLICK_SINGLE;
+    public static int musicPlay = CLICK_SINGLE;
+    public static int musicForward = CLICK_DOUBLE;
+    public static int musicReverse = CLICK_HOLD;
+
+    public static int COMMONDIALOG_ONEBUTTON = 1;
+    public static int COMMONDIALOG_TWOBUTTON = 2;
+
+//    public static final int CLICK_SILENT = 0;
+//    public static final int CLICK_SOUND = 1;
+//    public static final int CLICK_REJECTCALL = 2;
+//    public static int mannermodeSingle = CLICK_SILENT;
+//    public static int mannermodeDouble = CLICK_SOUND;
+//    public static int mannermodeHold = CLICK_REJECTCALL;
+
+
     public static final int REQUEST_IMAGE_CAPTURE = 13;
     public static final int REQUEST_CAPTURE = 14;
 
@@ -46,11 +84,7 @@ public class Constants {
     public static boolean videoShot = false;
     public static boolean videoPage = false;
 
-    public static int index = 0;
-    public static boolean isMusicSave = false;
-    public static boolean isCameraSave = false;
     public static boolean isEmergencySave = false;
-    public static boolean isMannermodeSave = false;
 
     public static boolean[] redColor = {false, false, false, false, false};
     public static boolean[] blueColor = {false, false, false, false, false};

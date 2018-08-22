@@ -9,6 +9,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.base.Constants;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,9 @@ import java.util.ArrayList;
 public class RecordSceneAdapter extends BaseAdapter{
     private ArrayList<RecordSceneData> recordMember;
     private LayoutInflater inflater;
-    private RadioButton clickButton;
+    private RadioButton singleButton;
+    private RadioButton doubleButton;
+    private RadioButton holdButton;
     public RecordSceneAdapter(LayoutInflater inflater, ArrayList<RecordSceneData> recordMember){
         this.inflater= inflater;
         this.recordMember = recordMember;
@@ -41,15 +44,55 @@ public class RecordSceneAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if(convertView== null){
-            convertView = inflater.inflate(R.layout.findphone_row, null);
+            convertView = inflater.inflate(R.layout.music_row, null);
         }
-        ImageView mImageView = (ImageView)convertView.findViewById(R.id.image);
-        TextView mTextView = (TextView)convertView.findViewById(R.id.label);
+        ImageView mImageView = (ImageView)convertView.findViewById(R.id.musicimage);
+        TextView mTextView = (TextView)convertView.findViewById(R.id.musictext);
 
         mImageView.setImageResource(recordMember.get(position).getImgId());
         mTextView.setText(recordMember.get(position).getFuncName());
-        clickButton = (RadioButton)convertView.findViewById(R.id.selected);
-        clickButton.setChecked(recordMember.get(position).clickCheck);
+        singleButton = (RadioButton)convertView.findViewById(R.id.click1check);
+        doubleButton = (RadioButton)convertView.findViewById(R.id.click2check);
+        holdButton = (RadioButton)convertView.findViewById(R.id.click3check);
+        singleButton.setChecked(recordMember.get(position).singleClickCheck);
+        doubleButton.setChecked(recordMember.get(position).doubleClickCheck);
+        holdButton.setChecked(recordMember.get(position).holdCheck);
+        singleButton.setTag(position);
+        doubleButton.setTag(position);
+        holdButton.setTag(position);
+        singleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (int)v.getTag();
+                switch(position) {
+                    case 0:
+                        Constants.voicerecordRecord = Constants.CLICK_SINGLE;
+                        break;
+                }
+            }
+        });
+        doubleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (int)v.getTag();
+                switch(position) {
+                    case 0:
+                        Constants.voicerecordRecord = Constants.CLICK_DOUBLE;
+                        break;
+                }
+            }
+        });
+        holdButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (int)v.getTag();
+                switch(position) {
+                    case 0:
+                        Constants.voicerecordRecord = Constants.CLICK_HOLD;
+                        break;
+                }
+            }
+        });
         return convertView;
     }
 }

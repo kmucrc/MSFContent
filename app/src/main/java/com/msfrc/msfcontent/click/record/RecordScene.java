@@ -1,5 +1,6 @@
 package com.msfrc.msfcontent.click.record;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -13,8 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.base.CommonDialog;
 import com.msfrc.msfcontent.base.Constants;
 import com.msfrc.msfcontent.base.FirstRow;
 import com.msfrc.msfcontent.base.FirstRowAdapter;
@@ -24,18 +27,22 @@ import java.util.ArrayList;
 /**
  * Created by kmuvcl_laptop_dell on 2016-07-25.
  */
-public class RecordScene extends AppCompatActivity{
+public class RecordScene extends AppCompatActivity implements MenuItem.OnMenuItemClickListener {
     private ArrayList<FirstRow> firstRow = new ArrayList<FirstRow>();
     private TextView titleText;
     private ArrayList<RecordSceneData> recordListData = new ArrayList<RecordSceneData>();
+    private SharedPreferences settings;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.music_main);
         ListView emergencyView;
         ListView firstRowView;
-        firstRow.add(new FirstRow(R.drawable.click, "              ", "        ","Click1"));
-        recordListData.add(new RecordSceneData(R.drawable.ic_record_voice_24dp, "RECORD VOICE", true));
+        settings = getPreferences(MODE_PRIVATE);
+        int findphoneChecked = settings.getInt("voicerecordRecord", Constants.voicerecordRecord);
+
+        firstRow.add(new FirstRow(R.drawable.click, "Click1", "Click2", "Hold"));
+        recordListData.add(new RecordSceneData(R.drawable.ic_record_voice_24dp, "RECORD VOICE", findphoneChecked));
         firstRowView = (ListView)findViewById(R.id.first);
         emergencyView = (ListView)findViewById(R.id.musicList);
         FirstRowAdapter firstAdapter = new FirstRowAdapter(getLayoutInflater(), firstRow);
@@ -69,6 +76,37 @@ public class RecordScene extends AppCompatActivity{
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.click_option_menu, menu);
+        MenuItem saveItem = menu.findItem(R.id.EDIT);
+        saveItem.setOnMenuItemClickListener(this);
         return true;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        final CommonDialog alertDialog = new CommonDialog(this, Constants.COMMONDIALOG_TWOBUTTON);
+        alertDialog.setTitle("설정값 저장");
+        alertDialog.setMessage("설정값을 저장하시겠습니까?");
+        alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+        alertDialog.setPositiveButton("확인", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putInt("voicerecordRecord", Constants.voicerecordRecord);
+                editor.commit();
+                Toast.makeText(getApplicationContext(),"설정값이 저장되었습니다.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        alertDialog.setNegativeButton("취소", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+
+            }
+        });
+        alertDialog.show();
+        return false;
     }
 }

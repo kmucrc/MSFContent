@@ -9,6 +9,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.base.Constants;
 
 import java.util.ArrayList;
 
@@ -21,15 +22,6 @@ public class MusicSceneAdapter extends BaseAdapter{
     public static RadioButton singleButton;
     public static RadioButton doubleButton;
     public static RadioButton holdButton;
-    public static boolean isFirstLineSingleChecked=true;
-    public static boolean isSecondLineSingleChecked=false;
-    public static boolean isThirdLineSingleChecked=false;
-    public static boolean isFirstLineDoubleChecked=false;
-    public static boolean isSecondLineDoubleChecked=true;
-    public static boolean isThirdLineDoubleChecked=false;
-    public static boolean isFirstLineHoldChecked=false;
-    public static boolean isSecondLineHoldChecked=false;
-    public static boolean isThirdLineHoldChecked=true;
     public MusicSceneAdapter(LayoutInflater inflater, ArrayList<MusicSceneData> musicMember){
         this.inflater= inflater;
         this.musicMember = musicMember;
@@ -73,19 +65,14 @@ public class MusicSceneAdapter extends BaseAdapter{
                 int position = (int)v.getTag();
                 switch(position) {
                     case 0:
-                        isFirstLineSingleChecked = true;
-                        isFirstLineDoubleChecked = false;
-                        isFirstLineHoldChecked = false;
+                        Constants.musicPlay = Constants.CLICK_SINGLE;
                         break;
                     case 1:
-                        isSecondLineSingleChecked = true;
-                        isSecondLineDoubleChecked = false;
-                        isSecondLineHoldChecked = false;
+                        Constants.musicForward = Constants.CLICK_SINGLE;
                         break;
                     case 2:
-                        isThirdLineSingleChecked = true;
-                        isThirdLineDoubleChecked = false;
-                        isThirdLineHoldChecked = false;
+                        Constants.musicReverse = Constants.CLICK_SINGLE;
+                        break;
                 }
             }
         });
@@ -95,19 +82,14 @@ public class MusicSceneAdapter extends BaseAdapter{
                 int position = (int)v.getTag();
                 switch(position) {
                     case 0:
-                        isFirstLineDoubleChecked = true;
-                        isFirstLineSingleChecked = false;
-                        isFirstLineHoldChecked = false;
+                        Constants.musicPlay = Constants.CLICK_DOUBLE;
                         break;
                     case 1:
-                        isSecondLineDoubleChecked = true;
-                        isSecondLineSingleChecked = false;
-                        isSecondLineHoldChecked = false;
+                        Constants.musicForward = Constants.CLICK_DOUBLE;
                         break;
                     case 2:
-                        isThirdLineDoubleChecked = true;
-                        isThirdLineSingleChecked = false;
-                        isThirdLineHoldChecked = false;
+                        Constants.musicReverse = Constants.CLICK_DOUBLE;
+                        break;
                 }
             }
         });
@@ -117,19 +99,14 @@ public class MusicSceneAdapter extends BaseAdapter{
                 int position = (int)v.getTag();
                 switch(position) {
                     case 0:
-                        isFirstLineHoldChecked = true;
-                        isFirstLineDoubleChecked = false;
-                        isFirstLineSingleChecked = false;
+                        Constants.musicPlay = Constants.CLICK_HOLD;
                         break;
                     case 1:
-                        isSecondLineHoldChecked = true;
-                        isSecondLineDoubleChecked = false;
-                        isSecondLineSingleChecked = false;
+                        Constants.musicForward = Constants.CLICK_HOLD;
                         break;
                     case 2:
-                        isThirdLineHoldChecked = true;
-                        isThirdLineSingleChecked = false;
-                        isThirdLineDoubleChecked = false;
+                        Constants.musicReverse = Constants.CLICK_HOLD;
+                        break;
                 }
             }
         });

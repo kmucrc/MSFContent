@@ -9,6 +9,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.base.Constants;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,9 @@ import java.util.ArrayList;
 public class LightSceneAdapter extends BaseAdapter{
     private ArrayList<LightSceneData> lightMember;
     private LayoutInflater inflater;
-    private RadioButton clickButton;
+    private RadioButton singleButton;
+    private RadioButton doubleButton;
+    private RadioButton holdButton;
     public LightSceneAdapter(LayoutInflater inflater, ArrayList<LightSceneData> lightMember){
         this.inflater= inflater;
         this.lightMember = lightMember;
@@ -41,15 +44,55 @@ public class LightSceneAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if(convertView== null){
-            convertView = inflater.inflate(R.layout.findphone_row, null);
+            convertView = inflater.inflate(R.layout.music_row, null);
         }
-        ImageView mImageView = (ImageView)convertView.findViewById(R.id.image);
-        TextView mTextView = (TextView)convertView.findViewById(R.id.label);
+        ImageView mImageView = (ImageView)convertView.findViewById(R.id.musicimage);
+        TextView mTextView = (TextView)convertView.findViewById(R.id.musictext);
 
         mImageView.setImageResource(lightMember.get(position).getImgId());
         mTextView.setText(lightMember.get(position).getFuncName());
-        clickButton = (RadioButton)convertView.findViewById(R.id.selected);
-        clickButton.setChecked(lightMember.get(position).clickCheck);
+        singleButton = (RadioButton)convertView.findViewById(R.id.click1check);
+        doubleButton = (RadioButton)convertView.findViewById(R.id.click2check);
+        holdButton = (RadioButton)convertView.findViewById(R.id.click3check);
+        singleButton.setChecked(lightMember.get(position).singleClickCheck);
+        doubleButton.setChecked(lightMember.get(position).doubleClickCheck);
+        holdButton.setChecked(lightMember.get(position).holdCheck);
+        singleButton.setTag(position);
+        doubleButton.setTag(position);
+        holdButton.setTag(position);
+        singleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (int)v.getTag();
+                switch(position) {
+                    case 0:
+                        Constants.lightLight = Constants.CLICK_SINGLE;
+                        break;
+                }
+            }
+        });
+        doubleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (int)v.getTag();
+                switch(position) {
+                    case 0:
+                        Constants.lightLight = Constants.CLICK_DOUBLE;
+                        break;
+                }
+            }
+        });
+        holdButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (int)v.getTag();
+                switch(position) {
+                    case 0:
+                        Constants.lightLight = Constants.CLICK_HOLD;
+                        break;
+                }
+            }
+        });
         return convertView;
     }
 }

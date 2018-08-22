@@ -28,13 +28,17 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 
 import com.msfrc.msfcontent.base.Constants;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 /**
@@ -49,6 +53,9 @@ public class BluetoothLeService extends Service {
     private String mBluetoothDeviceAddress;
     private BluetoothGatt mBluetoothGatt;
     private int mConnectionState = STATE_DISCONNECTED;
+    private Timer clickTimer = new Timer();
+    private boolean isStartTimer = false;
+    private int nClickAction = 0;
 
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
@@ -195,11 +202,45 @@ public class BluetoothLeService extends Service {
                 if(Constants.beforSignal.contains("01")){
 //                    ConnectionScene.actions("SingleClick");
                     long time = System.currentTimeMillis();
-                    if((time-Constants.beforClickTime)/1000.0 < 1){
-                        ConnectionScene.actions("DoubleClick");
-                    }else{
-                        ConnectionScene.actions("SingleClick");
-                    }Constants.beforClickTime=time;
+                    long elapsedtime = time-Constants.beforClickTime;
+
+                    if(isStartTimer) {
+                        Log.e("eleutheria", "isStartTimer");
+                        nClickAction = 2;
+                    } else {
+                        Log.e("eleutheria", "isStartTimer == else");
+                        isStartTimer = true;
+                        nClickAction = 1;
+                        clickTimer = new Timer();
+                        TimerTask clickTimerTask = new TimerTask() {
+
+                            @Override
+                            public void run() {
+                                if(nClickAction == 2) {
+                                    Log.e("eleutheria", "DoubleClick");
+                                    ConnectionScene.actions("DoubleClick");
+                                } else {
+                                    Log.e("eleutheria", "SingleClick");
+                                    ConnectionScene.actions("SingleClick");
+                                }
+                                nClickAction = 0;
+                                isStartTimer = false;
+                                clickTimer.cancel();
+                                clickTimer.purge();
+                                Log.e("eleutheria", "isStartTimer :" + isStartTimer);
+
+                            }
+                        };
+                        clickTimer.schedule(clickTimerTask,1000);
+                    }
+
+//                    Log.e("eleutheria", "time : %ld" + elapsedtime);
+//                    if((time-Constants.beforClickTime)/1000.0 < 1){
+//                        ConnectionScene.actions("DoubleClick");
+//                    }else{
+//                        ConnectionScene.actions("SingleClick");
+//                    }
+                    Constants.beforClickTime=time;
                 }if(Constants.beforSignal.contains("02")){
                     ConnectionScene.actions("Hold");
 //                }if(Constants.beforSignal.contains("03")){

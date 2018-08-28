@@ -120,10 +120,10 @@ public class MusicScene extends AppCompatActivity implements MenuItem.OnMenuItem
         CommonUtil commonUtil = new CommonUtil();
         if (commonUtil.getDuplicatesCheck(Constants.musicPlay, Constants.musicForward, Constants.musicReverse)) {
             final CommonDialog alertDialog = new CommonDialog(this, Constants.COMMONDIALOG_TWOBUTTON);
-            alertDialog.setTitle("설정값 저장");
-            alertDialog.setMessage("설정값을 저장하시겠습니까?");
+            alertDialog.setTitle(getString(R.string.str_commondialog_title_save_settings));
+            alertDialog.setMessage(getString(R.string.str_commondialog_message_save_settings));
             alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-            alertDialog.setPositiveButton("확인", new View.OnClickListener() {
+            alertDialog.setPositiveButton(getString(R.string.str_commondialog_ok), new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
@@ -132,12 +132,12 @@ public class MusicScene extends AppCompatActivity implements MenuItem.OnMenuItem
                     editor.putInt("musicForward", Constants.musicForward);
                     editor.putInt("musicReverse", Constants.musicReverse);
                     editor.commit();
-                    Toast.makeText(getApplicationContext(),"설정값이 저장되었습니다.",
+                    Toast.makeText(getApplicationContext(),getString(R.string.str_commondialog_message_settings_have_been_saved),
                             Toast.LENGTH_SHORT).show();
                 }
             });
 
-            alertDialog.setNegativeButton("취소", new View.OnClickListener() {
+            alertDialog.setNegativeButton(getString(R.string.str_commondialog_no), new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
@@ -148,10 +148,10 @@ public class MusicScene extends AppCompatActivity implements MenuItem.OnMenuItem
 
         } else {
             final CommonDialog alertDialog = new CommonDialog(this, Constants.COMMONDIALOG_ONEBUTTON);
-            alertDialog.setTitle("설정값 중복");
-            alertDialog.setMessage("설정값이 중복되었습니다.\n확인 후 다시 저장 해 주세요.");
+            alertDialog.setTitle(getString(R.string.str_commondialog_title_duplicate_settings));
+            alertDialog.setMessage(getString(R.string.str_commondialog_message_check_save_again));
             alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-            alertDialog.setPositiveButton("확인", new View.OnClickListener() {
+            alertDialog.setPositiveButton(getString(R.string.str_commondialog_ok), new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();

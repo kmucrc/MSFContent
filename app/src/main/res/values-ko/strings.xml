@@ -39,21 +39,21 @@
     <string name="disconnected">disconnected</string>
 
     <!--Common Dialog-->
-    <string name="str_commondialog_title_save_settings">Save Settings</string>
-    <string name="str_commondialog_message_save_settings">Do you Want to Save the Settings?</string>
-    <string name="str_commondialog_message_settings_have_been_saved">The Settings have been saved.</string>
-    <string name="str_commondialog_title_duplicate_settings">Duplicate Settings</string>
-    <string name="str_commondialog_message_check_save_again">Duplicate Settings\nPlease Check and Save Again</string>
-    <string name="str_commondialog_ok">OK</string>
-    <string name="str_commondialog_no">NO</string>
+    <string name="str_commondialog_title_save_settings">설정값 저장</string>
+    <string name="str_commondialog_message_save_settings">설정값을 저장하시겠습니까?</string>
+    <string name="str_commondialog_message_settings_have_been_saved">설정값이 저장되었습니다.</string>
+    <string name="str_commondialog_title_duplicate_settings">설정값 중복</string>
+    <string name="str_commondialog_message_check_save_again">설정값이 중복되었습니다.\n확인 후 다시 저장 해 주세요.</string>
+    <string name="str_commondialog_ok">확인</string>
+    <string name="str_commondialog_no">취소</string>
 
-    <!--Common Dialog-->
-    <string name="str_toast_turn_off_do_not_disturb">Please turn off Do Not Disturb mode.</string>
-    <string name="str_toast_bluetooth_is_not_connected">Bluetooth is not Connected.</string>
-    <string name="str_toast_start_recording">Start Recording.</string>
-    <string name="str_toast_folder_creation_failed">Folder_Creation_failed.</string>
-    <string name="str_toast_stop_recording">Stop Recording.</string>
-    <string name="str_toast_play_the_recorded_file">Play the Recorded File.</string>
-    <string name="str_toast_stop_playback">Stop Playback.</string>
+    <!--Toast-->
+    <string name="str_toast_turn_off_do_not_disturb">방해금지모드를 해제 해 주세요.</string>
+    <string name="str_toast_bluetooth_is_not_connected">블루투스가 연결되지 않았습니다.</string>
+    <string name="str_toast_start_recording">녹음을 시작합니다.</string>
+    <string name="str_toast_folder_creation_failed">폴더 생성에 실패하였습니다.</string>
+    <string name="str_toast_stop_recording">녹음이 중지되었습니다.</string>
+    <string name="str_toast_play_the_recorded_file">녹음된 파일을 재생합니다.</string>
+    <string name="str_toast_stop_playback">재생을 중지합니다.</string>
 
 </resources>

@@ -31,6 +31,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -78,6 +79,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     //Bluetooth
     static BluetoothAdapter mBluetoothAdapter;
     private static Vibrator mVibe;
+    final static long[] mVibPattern = new long[]{500, 200, 500, 200};
+    final static int[] mAmplitudes = new int[]{128, 255, 128, 255};
     private static long[] parcelArray = {0, 1000, 500};
     //recorder
     private static MediaRecorder mRecorder;
@@ -195,7 +198,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                 requestPermissions(PERMISSIONS, PERMISSIONS_REQUEST_CODE);
             }
             if (!notificationManager.isNotificationPolicyAccessGranted()){
-                Toast.makeText(context,"방해금지모드를 해제해주세요",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,getString(R.string.str_toast_turn_off_do_not_disturb),Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                 startActivity(intent);
             }
@@ -359,7 +362,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             Intent uiHomeIntent = new Intent(context, UIScene.class);
             context.startActivity(uiHomeIntent);
         }else{
-            Toast.makeText(context, "블루투스가 연결되지 않았습니다.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getString(R.string.str_toast_bluetooth_is_not_connected),Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -469,7 +472,6 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                     Log.d(TAG, "SingleClick prevMusic");
                 }
             }
-
         }
         else if(Constants.clickIndex == Constants.CLICK_CAMERA){//Constants.clickCameraPage){
             if(message.equals("SingleClick")) {
@@ -821,7 +823,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                 @Override
                 public void run() {
                     try {
-                        Toast.makeText(mActivity.getApplicationContext(), "녹음을 시작합니다.",
+                        Toast.makeText(mActivity.getApplicationContext(), context.getString(R.string.str_toast_start_recording),
                                 Toast.LENGTH_SHORT).show();
                         mRecorder.prepare();
                         Log.e(TAG, "start() failed");
@@ -835,7 +837,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(mActivity.getApplicationContext(), "폴더 생성에 실패하였습니다.",
+                    Toast.makeText(mActivity.getApplicationContext(), context.getString(R.string.str_toast_folder_creation_failed),
                             Toast.LENGTH_SHORT).show();
                 }
             });
@@ -864,7 +866,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(mActivity.getApplicationContext(),"녹음이 중지되었습니다.",
+                Toast.makeText(mActivity.getApplicationContext(),context.getString(R.string.str_toast_play_the_recorded_file),
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -876,7 +878,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             player.stop();
             player.release();
             player = null;
-        }Toast.makeText(mActivity.getApplicationContext(),"녹음된 파일을 재생합니다.",
+        }Toast.makeText(mActivity.getApplicationContext(),context.getString(R.string.str_toast_stop_recording),
                 Toast.LENGTH_SHORT).show();
         try{
             player = new MediaPlayer();
@@ -887,7 +889,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     }
     public static void playStopRecordingVoice(){
         if(player==null) return;
-        Toast.makeText(mActivity.getApplicationContext(),"재생을 중지합니다.",
+        Toast.makeText(mActivity.getApplicationContext(),context.getString(R.string.str_toast_stop_playback),
                 Toast.LENGTH_SHORT).show();
         player.stop();
         player.release();
@@ -1036,6 +1038,10 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     }
 
     public static void findPhone() {
+        if(mVibe == null) {
+            mVibe = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+        }
+
         if (!isAudioPlay) {
             try {
                 mAudio = new MediaPlayer();
@@ -1049,9 +1055,15 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             }
             mAudio.start();
             isAudioPlay = true;
+            if(Build.VERSION.SDK_INT >= 26) {
+                mVibe.vibrate(VibrationEffect.createWaveform(mVibPattern, mAmplitudes, 0));
+            } else {
+                mVibe.vibrate(VibrationEffect.DEFAULT_AMPLITUDE);
+            }
         } else {
             mAudio.stop();
             isAudioPlay = false;
+            mVibe.cancel();
         }
     }
     public static void setSilentMode(){
@@ -1059,7 +1071,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         if(n.isNotificationPolicyAccessGranted()) {
             mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
         }else{
-            Toast.makeText(context,"방해금지모드를 해제해주세요",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getString(R.string.str_toast_turn_off_do_not_disturb),Toast.LENGTH_SHORT).show();
         }
     }
     public void onStartButtonClicked(View v){

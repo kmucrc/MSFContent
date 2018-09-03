@@ -9,6 +9,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.base.Constants;
 
 import java.util.ArrayList;
 
@@ -21,9 +22,6 @@ public class EmergencySceneAdapter extends BaseAdapter{
     private RadioButton singleButton;
     private RadioButton doubleButton;
     private RadioButton holdButton;
-    public static boolean isFirstLineSingleChecked=true;
-    public static boolean isFirstLineDoubleChecked=false;
-    public static boolean isFirstLineHoldChecked=false;
 
     public EmergencySceneAdapter(LayoutInflater inflater, ArrayList<EmergencySceneData> emergencyMember){
         this.inflater= inflater;
@@ -69,9 +67,7 @@ public class EmergencySceneAdapter extends BaseAdapter{
                 int position = (int)v.getTag();
                 switch(position) {
                     case 0:
-                        isFirstLineSingleChecked = true;
-                        isFirstLineDoubleChecked = false;
-                        isFirstLineHoldChecked = false;
+                        Constants.emergencySendLocation = Constants.CLICK_SINGLE;
                         break;
                 }
             }
@@ -82,9 +78,7 @@ public class EmergencySceneAdapter extends BaseAdapter{
                 int position = (int)v.getTag();
                 switch(position) {
                     case 0:
-                        isFirstLineDoubleChecked = true;
-                        isFirstLineSingleChecked = false;
-                        isFirstLineHoldChecked = false;
+                        Constants.emergencySendLocation = Constants.CLICK_SINGLE;
                         break;
                 }
             }
@@ -95,9 +89,7 @@ public class EmergencySceneAdapter extends BaseAdapter{
                 int position = (int)v.getTag();
                 switch(position) {
                     case 0:
-                        isFirstLineHoldChecked = true;
-                        isFirstLineDoubleChecked = false;
-                        isFirstLineSingleChecked = false;
+                        Constants.emergencySendLocation = Constants.CLICK_SINGLE;
                         break;
                 }
             }

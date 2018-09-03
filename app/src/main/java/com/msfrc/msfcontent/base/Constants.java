@@ -1,5 +1,7 @@
 package com.msfrc.msfcontent.base;
 
+import java.util.ArrayList;
+
 /**
  * Created by kmuvcl_laptop_dell on 2016-07-05.
  */
@@ -24,9 +26,16 @@ public class Constants {
     public static final int CAMERA_CAPTURE = 12;
     public static final String DEVICE_NAME = "device_name";
 
+    // MAINMENU INDEX
+    public static final int MAIN_MENU_CONNECTION = 0;
+    public static final int MAIN_MENU_NOTIFICATIONS = 1;
+//    public static final int MAIN_MENU_CONTACTS = 2;
+    public static final int MAIN_MENU_CLICK = 2;
+    public static final int MAIN_MENU_COLOR_PICKERS = 3;
+    public static final int MAIN_MENU_PREFERENCES = 4;
+    public static final int MAIN_MENU_HELP_REVIEW =5;
 
     // CLICK INDEX
-
     public static final int CLICK_MUSIC_PLAY = 0;
     public static final int CLICK_CAMERA = 1;
     public static final int CLICK_EMERGENCY = 2;
@@ -50,9 +59,14 @@ public class Constants {
     public static int musicPlay = CLICK_SINGLE;
     public static int musicForward = CLICK_DOUBLE;
     public static int musicReverse = CLICK_HOLD;
+    public static int emergencySendLocation = CLICK_SINGLE;
 
     public static int COMMONDIALOG_ONEBUTTON = 1;
     public static int COMMONDIALOG_TWOBUTTON = 2;
+
+    public static int EMERGENCY_CONTACT_LIMIT = 5;
+
+    public static ArrayList<String> listPhoneNumber = new ArrayList<String>();
 
 //    public static final int CLICK_SILENT = 0;
 //    public static final int CLICK_SOUND = 1;

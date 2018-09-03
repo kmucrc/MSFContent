@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
+import com.msfrc.msfcontent.base.Constants;
 import com.msfrc.msfcontent.click.ClickScene;
 import com.msfrc.msfcontent.colorpicker.ColorPickerActivity;
 import com.msfrc.msfcontent.connection.ConnectionScene;
@@ -63,7 +64,7 @@ public class UIScene extends AppCompatActivity implements AdapterView.OnItemClic
     public void addToList() {
         datas.add(new UiSceneData(R.drawable.connection, "CONNECTION"));
         datas.add(new UiSceneData(R.drawable.notification, "NOTIFICATIONS"));
-        datas.add(new UiSceneData(R.drawable.contacts, "CONTACTS"));
+//        datas.add(new UiSceneData(R.drawable.contacts, "CONTACTS"));
         datas.add(new UiSceneData(R.drawable.click, "CLICK"));
         datas.add(new UiSceneData(R.drawable.colorpicker, "COLOR PICKERS"));
         datas.add(new UiSceneData(R.drawable.preference, "PREFERENCES"));
@@ -72,33 +73,33 @@ public class UIScene extends AppCompatActivity implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (position) {
-            case 0:
+            case Constants.MAIN_MENU_CONNECTION:
                 Intent connectionSceneIntent = new Intent(getApplicationContext(), ConnectionScene.class);
 //                startActivity(connectionSceneIntent);
                 setResult(Activity.RESULT_OK, connectionSceneIntent);
                 finish();
                 break;
-            case 1:
+            case Constants.MAIN_MENU_NOTIFICATIONS:
                 Intent notificationSceneIntent = new Intent(getApplicationContext(), NotificationScene.class);
                 startActivity(notificationSceneIntent);
                 break;
-            case 2:
-                Intent contactSceneIntent = new Intent(getApplicationContext(), ContactScene.class);
-                startActivity(contactSceneIntent);
-                break;
-            case 3:
+//            case Constants.MAIN_MENU_CONTACTS:
+//                Intent contactSceneIntent = new Intent(getApplicationContext(), ContactScene.class);
+//                startActivity(contactSceneIntent);
+//                break;
+            case Constants.MAIN_MENU_CLICK:
                 Intent clickSceneIntent = new Intent(getApplicationContext(), ClickScene.class);
                 startActivity(clickSceneIntent);
                 break;
-            case 4:
+            case Constants.MAIN_MENU_COLOR_PICKERS:
                 Intent colorPickerSceneIntent = new Intent(getApplicationContext(), ColorPickerActivity.class);
                 startActivity(colorPickerSceneIntent);
                 break;
-            case 5:
+            case Constants.MAIN_MENU_PREFERENCES:
                 Intent preferenceSceneIntent = new Intent(getApplicationContext(), PreferenceScene.class);
                 startActivity(preferenceSceneIntent);
                 break;
-            case 6:
+            case Constants.MAIN_MENU_HELP_REVIEW:
                 Intent helpSceneIntent = new Intent(getApplicationContext(), Help.class);
                 startActivity(helpSceneIntent);
                 break;

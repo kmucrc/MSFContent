@@ -1,5 +1,6 @@
 package com.msfrc.msfcontent.contacts;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +18,19 @@ import java.util.ArrayList;
  */
 public class ContactAdapter extends BaseAdapter{
 
+    public interface ListBtnClickListener {
+        void onListBtnClick(int position) ;
+    }
+
     private ArrayList<ContactListData> listMembers;
     private LayoutInflater inflater;
     public static ImageButton deleteButton;
+    private ListBtnClickListener listBtnClickListener ;
 
-    public ContactAdapter(LayoutInflater inflater, ArrayList<ContactListData> listMembers){
+    public ContactAdapter(LayoutInflater inflater, ArrayList<ContactListData> listMembers, ListBtnClickListener clickListener){
         this.inflater = inflater;
         this.listMembers = listMembers;
+        this.listBtnClickListener = clickListener ;
     }
 
 
@@ -55,6 +62,9 @@ public class ContactAdapter extends BaseAdapter{
             public void onClick(View v) {
                 listMembers.remove(position);
                 notifyDataSetChanged();
+                if (listBtnClickListener != null) {
+                    listBtnClickListener.onListBtnClick(position) ;
+                }
             }
         });
         img_flag.setImageResource(listMembers.get(position).getImgId());

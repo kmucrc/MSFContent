@@ -25,7 +25,7 @@ import java.util.ArrayList;
 /**
  * Created by kmuvcl_laptop_dell on 2016-07-20.
  */
-public class ContactScene extends AppCompatActivity{
+public class ContactScene extends AppCompatActivity implements ContactAdapter.ListBtnClickListener {
     private final String TAG = "Contact Scene";
     private ArrayList<ContactListData> listMembers = new ArrayList<ContactListData>();
     private ArrayList<ContactTopLineData> topMembers = new ArrayList<ContactTopLineData>();
@@ -84,11 +84,16 @@ public class ContactScene extends AppCompatActivity{
             Log.d(TAG, name);
             //mNumber.setText(cursor.getString(1));     //번호 얻어오기
             listMembers.add(new ContactListData(name, R.drawable.contactsonly));
-            listAdapter= new ContactAdapter(getLayoutInflater(), listMembers);
+            listAdapter= new ContactAdapter(getLayoutInflater(), listMembers, this);
             listView.setAdapter(listAdapter);
             cursor.close();
         }
         super.onActivityResult(requestCode, resultCode, data);
+
+    }
+
+    @Override
+    public void onListBtnClick(int position) {
 
     }
 }

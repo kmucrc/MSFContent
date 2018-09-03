@@ -84,22 +84,22 @@ public class RecordScene extends AppCompatActivity implements MenuItem.OnMenuIte
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         final CommonDialog alertDialog = new CommonDialog(this, Constants.COMMONDIALOG_TWOBUTTON);
-        alertDialog.setTitle("설정값 저장");
-        alertDialog.setMessage("설정값을 저장하시겠습니까?");
+        alertDialog.setTitle(getString(R.string.str_commondialog_title_save_settings));
+        alertDialog.setMessage(getString(R.string.str_commondialog_message_save_settings));
         alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-        alertDialog.setPositiveButton("확인", new View.OnClickListener() {
+        alertDialog.setPositiveButton(getString(R.string.str_commondialog_ok), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putInt("voicerecordRecord", Constants.voicerecordRecord);
                 editor.commit();
-                Toast.makeText(getApplicationContext(),"설정값이 저장되었습니다.",
+                Toast.makeText(getApplicationContext(),getString(R.string.str_commondialog_message_settings_have_been_saved),
                         Toast.LENGTH_SHORT).show();
             }
         });
 
-        alertDialog.setNegativeButton("취소", new View.OnClickListener() {
+        alertDialog.setNegativeButton(getString(R.string.str_commondialog_no), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();

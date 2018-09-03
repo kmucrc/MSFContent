@@ -106,7 +106,7 @@ public class BluetoothLeService extends Service {
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
-            Log.i("BLESercvice", "onServicesDiscovered");
+            Log.i("BLEService", "onServicesDiscovered");
             setButtonNotification(true);
         }
 
@@ -117,7 +117,7 @@ public class BluetoothLeService extends Service {
 //            byte[] value = characteristic.getValue();
 //            String v = new String(value);
 //            Toast.makeText(getApplicationContext(), "onCharacteristicRead", Toast.LENGTH_SHORT).show();
-            Log.i("BLESercvice", "onCharacteristicRead");
+            Log.i("BLEService", "onCharacteristicRead");
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
             }
@@ -128,7 +128,7 @@ public class BluetoothLeService extends Service {
                                             BluetoothGattCharacteristic characteristic) {
 //            setCharacteristicNotification(characteristic, true);
             final byte[] dataInput = characteristic.getValue();
-//            Log.i("BLESercvice", "onCharacteristicChanged : "+dataInput);
+//            Log.i("BLEService", "onCharacteristicChanged : "+dataInput);
             broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
             if(inData.contains("00")){
                 //intent.putExtra(EXTRA_DATA, "SingleClick");
@@ -140,7 +140,7 @@ public class BluetoothLeService extends Service {
 //                    co+=Integer.toHexString(a);
 //                }
 //                writeColorCharacteristic(co);
-//                Log.i("BLESercvice", "writeColor");
+//                Log.i("BLEService", "writeColor");
             }
         }
     };
@@ -153,7 +153,7 @@ public class BluetoothLeService extends Service {
     private void broadcastUpdate(final String action,
                                  final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
-        Log.d("BLESercvice", "broadcastUpdate");
+        Log.d("BLEService", "broadcastUpdate");
         // This is special handling for the Heart Rate Measurement profile.  Data parsing is
         // carried out as per profile specifications:
         // http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml
@@ -205,10 +205,8 @@ public class BluetoothLeService extends Service {
                     long elapsedtime = time-Constants.beforClickTime;
 
                     if(isStartTimer) {
-                        Log.e("eleutheria", "isStartTimer");
                         nClickAction = 2;
                     } else {
-                        Log.e("eleutheria", "isStartTimer == else");
                         isStartTimer = true;
                         nClickAction = 1;
                         clickTimer = new Timer();
@@ -227,11 +225,10 @@ public class BluetoothLeService extends Service {
                                 isStartTimer = false;
                                 clickTimer.cancel();
                                 clickTimer.purge();
-                                Log.e("eleutheria", "isStartTimer :" + isStartTimer);
 
                             }
                         };
-                        clickTimer.schedule(clickTimerTask,1000);
+                        clickTimer.schedule(clickTimerTask,500);
                     }
 
 //                    Log.e("eleutheria", "time : %ld" + elapsedtime);
@@ -255,7 +252,7 @@ public class BluetoothLeService extends Service {
                     co+=Integer.toHexString(a);
                 }
                 writeColorCharacteristic(co);
-                Log.i("BLESercvice", "writeColor");
+                Log.i("BLEService", "writeColor");
             }
             intent.putExtra(EXTRA_DATA, String.valueOf(inData));
         }

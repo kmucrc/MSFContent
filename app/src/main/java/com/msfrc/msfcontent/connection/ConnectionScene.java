@@ -39,6 +39,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.telecom.TelecomManager;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -50,6 +51,7 @@ import android.widget.Toast;
 
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.base.Constants;
+import com.msfrc.msfcontent.base.ITelephony;
 import com.msfrc.msfcontent.click.camera.CameraActivity;
 import com.msfrc.msfcontent.click.camera.CameraSceneAdapter;
 import com.msfrc.msfcontent.click.camera.SelfieCamera;
@@ -61,6 +63,7 @@ import com.msfrc.msfcontent.home.UIScene;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -198,7 +201,12 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                 requestPermissions(PERMISSIONS, PERMISSIONS_REQUEST_CODE);
             }
             if (!notificationManager.isNotificationPolicyAccessGranted()){
-                Toast.makeText(context,getString(R.string.str_toast_turn_off_do_not_disturb),Toast.LENGTH_SHORT).show();
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, context.getString(R.string.str_toast_turn_off_do_not_disturb), Toast.LENGTH_SHORT).show();
+                    }
+                });
                 Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                 startActivity(intent);
             }
@@ -231,13 +239,23 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         }
         //BLE지원여부
         if(!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)){
-            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, context.getString(R.string.ble_not_supported), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
         //Bluetooth지원여부
         if (mBluetoothAdapter == null) {
-            Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, context.getString(R.string.error_bluetooth_not_supported), Toast.LENGTH_SHORT).show();
+                }
+            });
             finish();
             return;
         }
@@ -362,7 +380,12 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             Intent uiHomeIntent = new Intent(context, UIScene.class);
             context.startActivity(uiHomeIntent);
         }else{
-            Toast.makeText(context, context.getString(R.string.str_toast_bluetooth_is_not_connected),Toast.LENGTH_SHORT).show();
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, context.getString(R.string.str_toast_bluetooth_is_not_connected),Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -490,11 +513,17 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         }
         else if(Constants.clickIndex == Constants.CLICK_EMERGENCY){//Constants.emergencyPage){
             if(message.equals("SingleClick")) {
-                sendSMS();
+                if (Constants.emergencySendLocation == Constants.CLICK_SINGLE) {
+                    sendSMS();
+                }
             } else if(message.equals("DoubleClick")) {
-                sendSMS();
+                if (Constants.emergencySendLocation == Constants.CLICK_DOUBLE) {
+                    sendSMS();
+                }
             } else if(message.equals("Hold")) {
-                sendSMS();
+                if (Constants.emergencySendLocation == Constants.CLICK_HOLD) {
+                    sendSMS();
+                }
             }
         }
         else if(Constants.clickIndex == Constants.CLICK_MANNER_MODE){//Constants.mannermodePage){
@@ -874,26 +903,26 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
     }
     static MediaPlayer player;
     public static void playRecordingVoice(){
-        if(player!=null){
-            player.stop();
-            player.release();
-            player = null;
-        }Toast.makeText(mActivity.getApplicationContext(),context.getString(R.string.str_toast_stop_recording),
-                Toast.LENGTH_SHORT).show();
-        try{
-            player = new MediaPlayer();
-            player.setDataSource(RECORDED_DIR);
-            player.prepare();
-            player.start();
-        }catch (Exception e){}
+//        if(player!=null){
+//            player.stop();
+//            player.release();
+//            player = null;
+//        }Toast.makeText(mActivity.getApplicationContext(),context.getString(R.string.str_toast_stop_recording),
+//                Toast.LENGTH_SHORT).show();
+//        try{
+//            player = new MediaPlayer();
+//            player.setDataSource(RECORDED_DIR);
+//            player.prepare();
+//            player.start();
+//        }catch (Exception e){}
     }
     public static void playStopRecordingVoice(){
-        if(player==null) return;
-        Toast.makeText(mActivity.getApplicationContext(),context.getString(R.string.str_toast_stop_playback),
-                Toast.LENGTH_SHORT).show();
-        player.stop();
-        player.release();
-        player=null;
+//        if(player==null) return;
+//        Toast.makeText(mActivity.getApplicationContext(),context.getString(R.string.str_toast_stop_playback),
+//                Toast.LENGTH_SHORT).show();
+//        player.stop();
+//        player.release();
+//        player=null;
     }
 
     //음악 플레이어 시작
@@ -976,13 +1005,26 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
 
     public static void sendSMS() {
-//        Log.d(TAG, "Send SMS");
-//        String phoneNumber = "01063985274";//사용자 휴대폰 번호
-//        String message = "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude;
-//
-//        SmsManager smsManager = SmsManager.getDefault();
-//        smsManager.sendTextMessage(phoneNumber, null, message, null, null);
-//        Toast.makeText(context, "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude, Toast.LENGTH_LONG).show();
+        Log.d(TAG, "Send SMS");
+        //String phoneNumber = "01063985274";//사용자 휴대폰 번호
+        String phoneNumber = "";
+        String message = "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude;
+        SmsManager smsManager = SmsManager.getDefault();
+
+        if(Constants.listPhoneNumber.size() > 0) {
+            for(String number : Constants.listPhoneNumber) {
+                phoneNumber = number;
+                Log.e("eleutheria", "phneNumber : " + phoneNumber);
+            }
+            smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+        }
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude, Toast.LENGTH_LONG).show();
+            }
+        });
+
 
     }
     public void onLocationChanged(Location location) {
@@ -1008,20 +1050,56 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
 
     public static void rejectCall() {
-        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        Class clazz = null;
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, "not yet.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //above api 29
+//        TelecomManager telecomMgr = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
+//
+//        if (telecomMgr != null) {
+//            boolean success = telecomMgr.endCall();
+//            // success == true if call was terminated.
+//        }
+
+
+        /*
+        TelephonyManager telephonyMgr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+
         try {
-            clazz = Class.forName(telephonyManager.getClass().getName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        Method method = null;
-        try {
-            method = clazz.getDeclaredMethod("getITelephony");
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        method.setAccessible(true);
+                Class clClass = Class.forName(telephonyMgr.getClass().getName());
+                Method meMethod = clClass.getDeclaredMethod("getITelephony");
+                meMethod.setAccessible(true);
+                ITelephony telephonyService = (ITelephony) meMethod.invoke(telephonyMgr);
+
+                //telephonyService.silenceRinger();
+                telephonyService.endCall();
+                Log.e("eleutheria","endcall");
+
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }*/
+
+
+//        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//        Class clazz = null;
+//        try {
+//            clazz = Class.forName(telephonyManager.getClass().getName());
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        Method method = null;
+//        try {
+//            method = clazz.getDeclaredMethod("getITelephony");
+//        } catch (NoSuchMethodException e) {
+//            e.printStackTrace();
+//        }
+//        method.setAccessible(true);
+
+
 //        ITelephony telephonyService = null;
 //        try {
 //            telephonyService = (ITelephony) method.invoke(telephonyManager);
@@ -1071,7 +1149,12 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         if(n.isNotificationPolicyAccessGranted()) {
             mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
         }else{
-            Toast.makeText(context, context.getString(R.string.str_toast_turn_off_do_not_disturb),Toast.LENGTH_SHORT).show();
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, context.getString(R.string.str_toast_turn_off_do_not_disturb),Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
     public void onStartButtonClicked(View v){

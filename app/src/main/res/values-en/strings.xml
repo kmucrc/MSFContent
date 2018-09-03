@@ -56,4 +56,7 @@
     <string name="str_toast_play_the_recorded_file">Play the Recorded File.</string>
     <string name="str_toast_stop_playback">Stop Playback.</string>
 
+    <string name="str_emergency_click_info">Edit Emergency PhoneNumber.</string>
+    <string name="str_emergency_limit_warning">The Limit has been Exceeded.</string>
+    <string name="str_emergency_duplicate_number">There are duplicate numbers.</string>
 </resources>

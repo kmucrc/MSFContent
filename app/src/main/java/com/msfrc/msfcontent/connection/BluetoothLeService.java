@@ -205,10 +205,8 @@ public class BluetoothLeService extends Service {
                     long elapsedtime = time-Constants.beforClickTime;
 
                     if(isStartTimer) {
-                        Log.e("eleutheria", "isStartTimer");
                         nClickAction = 2;
                     } else {
-                        Log.e("eleutheria", "isStartTimer == else");
                         isStartTimer = true;
                         nClickAction = 1;
                         clickTimer = new Timer();
@@ -227,7 +225,6 @@ public class BluetoothLeService extends Service {
                                 isStartTimer = false;
                                 clickTimer.cancel();
                                 clickTimer.purge();
-                                Log.e("eleutheria", "isStartTimer :" + isStartTimer);
 
                             }
                         };

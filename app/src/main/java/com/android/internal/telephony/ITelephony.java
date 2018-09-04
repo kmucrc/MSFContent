@@ -1,4 +1,4 @@
-package com.msfrc.msfcontent.base;
+package com.android.internal.telephony;
 
 public interface ITelephony {
     boolean endCall();

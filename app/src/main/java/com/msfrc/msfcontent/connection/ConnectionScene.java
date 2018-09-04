@@ -49,9 +49,9 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.internal.telephony.ITelephony;
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.base.Constants;
-import com.msfrc.msfcontent.base.ITelephony;
 import com.msfrc.msfcontent.click.camera.CameraActivity;
 import com.msfrc.msfcontent.click.camera.CameraSceneAdapter;
 import com.msfrc.msfcontent.click.camera.SelfieCamera;
@@ -275,7 +275,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             , "android.permission.SEND_SMS", "android.permission.READ_PHONE_STATE"
             , "android.permission.ACCESS_NOTIFICATION_POLICY"
             , "android.permission.READ_CONTACTS", "android.permission.CAMERA"
-            , "android.permission.RECORD_AUDIO", "android.permission.WRITE_EXTERNAL_STORAGE"};
+            , "android.permission.RECORD_AUDIO", "android.permission.WRITE_EXTERNAL_STORAGE"
+            , "android.permission.CALL_PHONE"};
 
     private boolean hasPermissions(String[] permissions) {
         int result;
@@ -1050,23 +1051,6 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
 
     public static void rejectCall() {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, "not yet.", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //above api 29
-//        TelecomManager telecomMgr = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
-//
-//        if (telecomMgr != null) {
-//            boolean success = telecomMgr.endCall();
-//            // success == true if call was terminated.
-//        }
-
-
-        /*
         TelephonyManager telephonyMgr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
 
         try {
@@ -1077,42 +1061,19 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
                 //telephonyService.silenceRinger();
                 telephonyService.endCall();
-                Log.e("eleutheria","endcall");
 
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException | SecurityException e) {
                 e.printStackTrace();
-            }*/
+            }
 
+//above api 29
+//        TelecomManager telecomMgr = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
+//
+//        if (telecomMgr != null) {
+//            boolean success = telecomMgr.endCall();
+//            // success == true if call was terminated.
+//        }
 
-//        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-//        Class clazz = null;
-//        try {
-//            clazz = Class.forName(telephonyManager.getClass().getName());
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        Method method = null;
-//        try {
-//            method = clazz.getDeclaredMethod("getITelephony");
-//        } catch (NoSuchMethodException e) {
-//            e.printStackTrace();
-//        }
-//        method.setAccessible(true);
-
-
-//        ITelephony telephonyService = null;
-//        try {
-//            telephonyService = (ITelephony) method.invoke(telephonyManager);
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        } catch (InvocationTargetException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            telephonyService.endCall();
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public static void findPhone() {

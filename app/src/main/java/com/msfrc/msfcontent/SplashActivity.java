@@ -63,7 +63,5 @@ public class SplashActivity extends AppCompatActivity {
 
     private void loadPref(SharedPreferences pref) {
         Constants.clickIndex = pref.getInt("clickIndex", Constants.CLICK_MUSIC_PLAY);
-        Log.e("eleutheria", "clickIndex : "  + Constants.clickIndex);
-
     }
 }

@@ -276,7 +276,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             , "android.permission.ACCESS_NOTIFICATION_POLICY"
             , "android.permission.READ_CONTACTS", "android.permission.CAMERA"
             , "android.permission.RECORD_AUDIO", "android.permission.WRITE_EXTERNAL_STORAGE"
-            , "android.permission.CALL_PHONE"};
+            , "android.permission.CALL_PHONE", "android.permission.RECEIVE_SMS"};
 
     private boolean hasPermissions(String[] permissions) {
         int result;
@@ -835,7 +835,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
         if(isMakeDir) {
             String currentDateandTime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-            Log.e("eleutheria", "currentTime : " + currentDateandTime);
+
             Constants.record = true;
             mRecorder = new MediaRecorder();
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -1016,8 +1016,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             for(String number : Constants.listPhoneNumber) {
                 phoneNumber = number;
                 Log.e("eleutheria", "phneNumber : " + phoneNumber);
+                smsManager.sendTextMessage(phoneNumber, null, message, null, null);
             }
-            smsManager.sendTextMessage(phoneNumber, null, message, null, null);
         }
         mActivity.runOnUiThread(new Runnable() {
             @Override

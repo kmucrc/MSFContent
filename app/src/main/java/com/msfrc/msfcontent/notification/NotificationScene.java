@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -43,8 +44,9 @@ public class NotificationScene extends AppCompatActivity{
     private TextView mTextView;
     private boolean editScene = false;
     private boolean doneScene = true;
+    private SharedPreferences settings;
 //    private TelephonyManager mTelephonyManager;
-    private SmsStateListenr mSmsStateListner;
+//    private SmsStateListenr mSmsStateListner;
     private ReminderListener mReminderListener;
     private AccountManager mAccountManager;
     private String email;
@@ -52,50 +54,51 @@ public class NotificationScene extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notification);
+        settings = getSharedPreferences("setupdData", MODE_PRIVATE);
         baseScene();
-        mSmsStateListner = new SmsStateListenr();
+//        mSmsStateListner = new SmsStateListenr();
         mReminderListener = new ReminderListener();
         email = getUsername();
         Log.d(TAG, ""+email);
         IntentFilter reminderFilter = new IntentFilter();
-        reminderFilter.addAction(ReminderListener.reminderAction);
+        reminderFilter.addAction(Constants.REMINDER_ACTION_NAME);
         registerReceiver(mReminderListener, reminderFilter);
-        IntentFilter smsIntentFilter = new IntentFilter();
-        smsIntentFilter.addAction(SmsStateListenr.action);
-        registerReceiver(mSmsStateListner, smsIntentFilter);
-        CallStateListener mCallStateListner = new CallStateListener();
+//        IntentFilter smsIntentFilter = new IntentFilter();
+//        smsIntentFilter.addAction(SmsStateListenr.action);
+//        registerReceiver(mSmsStateListner, smsIntentFilter);
+//        CallStateListener mCallStateListner = new CallStateListener();
 //        mTelephonyManager = (TelephonyManager)getSystemService(getApplicationContext().TELEPHONY_SERVICE);
 //        mTelephonyManager.listen(mCallStateListner, PhoneStateListener.LISTEN_CALL_STATE);
         setCustomerActionBar();
 
     }
     public void baseScene(){
+//        boolean notiCallChecked = settings.getBoolean("notiCallCheck", Constants.notiCallCheck);
+//        boolean notiSMSChecked = settings.getBoolean("notiSMSCheck", Constants.notiSMSCheck);
+//        boolean notiReminderChecked = settings.getBoolean("notiReminderCheck", Constants.notiReminderCheck);
+        Constants.notiCallCheck = settings.getBoolean("notiCallCheck", Constants.notiCallCheck);
+        Constants.notiSMSCheck = settings.getBoolean("notiSMSCheck", Constants.notiSMSCheck);
+        Constants.notiReminderCheck = settings.getBoolean("notiReminderCheck", Constants.notiReminderCheck);
+
         ListView listView = null;
-        datas.add(new NotificationListData(R.drawable.phonecall, "PHONE CALL", Constants.notificationCheck[0]));
-        datas.add(new NotificationListData(R.drawable.textmassage, "TEXT MESSAGE", Constants.notificationCheck[1]));
-        datas.add(new NotificationListData(R.drawable.reminders, "REMINDERS", Constants.notificationCheck[2]));
+        datas.add(new NotificationListData(R.drawable.phonecall, "PHONE CALL", Constants.notiCallCheck));
+        datas.add(new NotificationListData(R.drawable.textmassage, "TEXT MESSAGE", Constants.notiSMSCheck));
+        datas.add(new NotificationListData(R.drawable.reminders, "REMINDERS", Constants.notiReminderCheck));
 
         listView = (ListView)findViewById(R.id.list);
 
-        NotificationAdapter mAdapter = new NotificationAdapter(getLayoutInflater(), datas);
+        NotificationAdapter mAdapter = new NotificationAdapter(getLayoutInflater(), datas, this);
         listView.setAdapter(mAdapter);
         doneScene= true;
         editScene = false;
     }
     public void setChangeScene(){
         ListView editListView = null;
-        if(!Constants.notificationSave) {
-            editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibrate, Color.WHITE, Color.rgb(75, 173, 172)));
-            editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibrate, Color.WHITE,  Color.rgb(75, 173, 172)));
-            editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibrate, Color.WHITE,Color.rgb(75, 173, 172)));
-            editListView = (ListView) findViewById(R.id.list);
-        }
-        else
-        {
-            SetLineColor();
-            editListView = (ListView) findViewById(R.id.list);
-        }
-        NotificationEditAdapter mAdapter = new NotificationEditAdapter(getLayoutInflater(), editDatas);
+
+        SetLineColor();
+        editListView = (ListView) findViewById(R.id.list);
+
+        NotificationEditAdapter mAdapter = new NotificationEditAdapter(getLayoutInflater(), editDatas, this);
         editListView.setAdapter(mAdapter);
 //        setCustomerActionBar();
         doneScene= false;
@@ -150,6 +153,7 @@ public class NotificationScene extends AppCompatActivity{
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             super.onCallStateChanged(state, incomingNumber);
+            Log.e("eleutheria", "Call number : " + incomingNumber);
             switch(state){
                 case TelephonyManager.CALL_STATE_RINGING:
                     if(Constants.redColor[0]);
@@ -174,52 +178,63 @@ public class NotificationScene extends AppCompatActivity{
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.e("eleutheria", "sms Listener");
             if(intent.getAction().equals(action)){
-                if(Constants.redColor[1]);
+                if(Constants.redColor[1]) {
+                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("1123E119");
 //                    ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
-                else if(Constants.blueColor[1]);
-//                    ConnectionScene.mBluetoothService.write("099EFF".getBytes());
-                else if(Constants.greenColor[1]);
-//                    ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
-                else if(Constants.yelloColor[1]);
-//                    ConnectionScene.mBluetoothService.write("FFD966".getBytes());
-                else if(Constants.whiteColor[1]);
-//                    ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
-
-                for(int i=0; i<=8; i++) {
-//                    ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[1].toString().getBytes());
                 }
+                else if(Constants.blueColor[1]) {
+                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11F66100");
+//                    ConnectionScene.mBluetoothService.write("099EFF".getBytes());
+                }
+                else if(Constants.greenColor[1]) {
+                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11B9194B");
+//                    ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
+                }
+                else if(Constants.yelloColor[1]) {
+                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11002699");
+//                    ConnectionScene.mBluetoothService.write("FFD966".getBytes());
+                }
+                else if(Constants.whiteColor[1]) {
+                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
+//                    ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
+                }
+
+//                for(int i=0; i<=8; i++) {
+//                    ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[1].toString().getBytes());
+
             }
         }
     }
     public class ReminderListener extends BroadcastReceiver{
-
-        static final String reminderAction = "android.intent.action.EVENT_REMINDER";
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(reminderAction)){
-                if(Constants.redColor[2])
-                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("1123E119");
-//                    ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
-                else if(Constants.blueColor[2])
-                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11F66100");
-//                    ConnectionScene.mBluetoothService.write("099EFF".getBytes());
-                else if(Constants.greenColor[2])
-                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11B9194B");
-//                    ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
-                else if(Constants.yelloColor[2])
-                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11002699");
-//                    ConnectionScene.mBluetoothService.write("FFD966".getBytes());
-                else if(Constants.whiteColor[2])
-                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
-//                    ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
-
-                for(int i=0; i<=8; i++) {
-//                    ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[2].toString().getBytes());
+            if(intent.getAction().equals(Constants.REMINDER_ACTION_NAME)){
+                switch (Constants.notiReminderColor) {
+                    case Constants.COLOR_WHITE:
+                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
+                        break;
+                    case Constants.COLOR_RED:
+                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("1123E119");
+                        break;
+                    case Constants.COLOR_GREEN:
+                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11B9194B");
+                        break;
+                    case Constants.COLOR_YELLOW:
+                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11002699");
+                        break;
+                    case Constants.COLOR_BLUE:
+                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11F66100");
+                        break;
+                    default:
+                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
+                        break;
                 }
             }
         }
     }
+
     public String getUsername() {
         AccountManager manager = AccountManager.get(this);
         Account[] accounts = manager.getAccountsByType("com.google");
@@ -248,24 +263,32 @@ public class NotificationScene extends AppCompatActivity{
     {
         int image;
         int color;
-        if(Constants.redColor[0]){
-            color = Color.rgb(220, 30, 230);
+
+        int notiCallColor = settings.getInt("notiCallColor", Constants.notiCallColor);
+        int notiSMSColor = settings.getInt("notiSMSColor", Constants.notiSMSColor);
+        int notiReminderColor = settings.getInt("notiReminderColor", Constants.notiReminderColor);
+
+        switch (notiCallColor) {
+            case Constants.COLOR_WHITE:
+                color = Color.rgb(255, 255, 255);
+                break;
+            case Constants.COLOR_RED:
+                color = Color.rgb(220, 30, 230);
+                break;
+            case Constants.COLOR_GREEN:
+                color = Color.rgb(70, 230, 180);
+                break;
+            case Constants.COLOR_YELLOW:
+                color = Color.rgb(255, 217, 102);
+                break;
+            case Constants.COLOR_BLUE:
+                color = Color.rgb(9, 158, 253);
+                break;
+            default:
+                color = Color.rgb(255, 255, 255);
+                break;
         }
-        else if(Constants.blueColor[0]){
-            color = Color.rgb(9, 158, 253);
-        }
-        else if(Constants.greenColor[0]){
-            color = Color.rgb(70, 230, 180);
-        }
-        else if(Constants.yelloColor[0]){
-            color = Color.rgb(255, 217, 102);
-        }
-        else if(Constants.whiteColor[0]){
-            color = Color.rgb(255, 255, 255);
-        }
-        else{
-            color = Color.rgb(75, 173, 172);
-        }
+
         if(Constants.isParecel[0][0]) image = R.drawable.vibeone;
         else if(Constants.isParecel[0][1]) image = R.drawable.vibetwo;
         else if(Constants.isParecel[0][2]) image = R.drawable.vibethree;
@@ -274,26 +297,29 @@ public class NotificationScene extends AppCompatActivity{
         else if(Constants.isParecel[0][5]) image = R.drawable.none;
         else image = R.drawable.vibrate;
 
-        editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, image, Color.WHITE, color));
+        editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, image, Color.LTGRAY, color));
 
-        if(Constants.redColor[1]){
-            color = Color.rgb(220, 30, 230);
+        switch (notiSMSColor) {
+            case Constants.COLOR_WHITE:
+                color = Color.rgb(255, 255, 255);
+                break;
+            case Constants.COLOR_RED:
+                color = Color.rgb(220, 30, 230);
+                break;
+            case Constants.COLOR_GREEN:
+                color = Color.rgb(70, 230, 180);
+                break;
+            case Constants.COLOR_YELLOW:
+                color = Color.rgb(255, 217, 102);
+                break;
+            case Constants.COLOR_BLUE:
+                color = Color.rgb(9, 158, 253);
+                break;
+            default:
+                color = Color.rgb(255, 255, 255);
+                break;
         }
-        else if(Constants.blueColor[1]){
-            color = Color.rgb(9, 158, 253);
-        }
-        else if(Constants.greenColor[1]){
-            color = Color.rgb(70, 230, 180);
-        }
-        else if(Constants.yelloColor[1]){
-            color = Color.rgb(255, 217, 102);
-        }
-        else if(Constants.whiteColor[1]){
-            color = Color.rgb(255, 255, 255);
-        }
-        else{
-            color = Color.rgb(75, 173, 172);
-        }
+
         if(Constants.isParecel[1][0]) image = R.drawable.vibeone;
         else if(Constants.isParecel[1][1]) image = R.drawable.vibetwo;
         else if(Constants.isParecel[1][2]) image = R.drawable.vibethree;
@@ -302,26 +328,29 @@ public class NotificationScene extends AppCompatActivity{
         else if(Constants.isParecel[1][5]) image = R.drawable.none;
         else image = R.drawable.vibrate;
 
-        editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, image, Color.WHITE, color));
+        editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, image, Color.LTGRAY, color));
 
-        if(Constants.redColor[2]){
-            color = Color.rgb(220, 30, 230);
+        switch (notiReminderColor) {
+            case Constants.COLOR_WHITE:
+                color = Color.rgb(255, 255, 255);
+                break;
+            case Constants.COLOR_RED:
+                color = Color.rgb(220, 30, 230);
+                break;
+            case Constants.COLOR_GREEN:
+                color = Color.rgb(70, 230, 180);
+                break;
+            case Constants.COLOR_YELLOW:
+                color = Color.rgb(255, 217, 102);
+                break;
+            case Constants.COLOR_BLUE:
+                color = Color.rgb(9, 158, 253);
+                break;
+            default:
+                color = Color.rgb(255, 255, 255);
+                break;
         }
-        else if(Constants.blueColor[2]){
-            color = Color.rgb(9, 158, 253);
-        }
-        else if(Constants.greenColor[2]){
-            color = Color.rgb(70, 230, 180);
-        }
-        else if(Constants.yelloColor[2]){
-            color = Color.rgb(255, 217, 102);
-        }
-        else if(Constants.whiteColor[2]){
-            color = Color.rgb(255, 255, 255);
-        }
-        else{
-            color = Color.rgb(75, 173, 172);
-        }
+
         if(Constants.isParecel[2][0]) image = R.drawable.vibeone;
         else if(Constants.isParecel[2][1]) image = R.drawable.vibetwo;
         else if(Constants.isParecel[2][2]) image = R.drawable.vibethree;
@@ -330,324 +359,6 @@ public class NotificationScene extends AppCompatActivity{
         else if(Constants.isParecel[2][5]) image = R.drawable.none;
         else image = R.drawable.vibrate;
 
-        editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, image, Color.WHITE, color));
-//        if (Constants.redColor[0]) {
-//            if(Constants.isParecel[0][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(220, 30, 230), Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[0][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(220, 30, 230), Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[0][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(220, 30, 230), Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[0][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(220, 30, 230), Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[0][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(220, 30, 230), Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[0][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.none, Color.rgb(220, 30, 230), Color.rgb(220, 30, 230)));
-//            }
-//        }
-//        else if (Constants.blueColor[0]) {
-//            if (Constants.isParecel[0][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[0][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[0][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[0][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[0][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[0][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.none, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//        }
-//        else if (Constants.greenColor[0]) {
-//            if (Constants.isParecel[0][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[0][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[0][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[0][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[0][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[0][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.none, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//        }
-//        else if (Constants.yelloColor[0]) {
-//            if (Constants.isParecel[0][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[0][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[0][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[0][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[0][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[0][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.none, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//        }
-//        else if (Constants.whiteColor[0]) {
-//            if (Constants.isParecel[0][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[0][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[0][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[0][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[0][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[0][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.none, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//        }
-//        else{
-//            editDatas.add(new NotificationEditData(R.drawable.phonecall, "PHONE CALL", R.drawable.colorpicker, R.drawable.vibrate, Color.rgb(255, 255, 255), Color.rgb(75, 173, 172)));
-//        }
-//        if (Constants.redColor[1]) {
-//            if(Constants.isParecel[1][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibeone, Color.WHITE, Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[1][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibetwo, Color.WHITE, Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[1][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibethree, Color.WHITE, Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[1][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibefour, Color.WHITE, Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[1][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.infinity, Color.WHITE, Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[1][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.none, Color.WHITE, Color.rgb(220, 30, 230)));
-//            }
-//        }
-//        else if (Constants.blueColor[1])
-//        {
-//            if (Constants.isParecel[1][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[1][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[1][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[1][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[1][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[1][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.none, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//        }
-//        else if (Constants.greenColor[1])
-//        {
-//            if (Constants.isParecel[1][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[1][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[1][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[1][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[1][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[1][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.none, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//        }
-//        else if (Constants.yelloColor[1])
-//        {
-//            if (Constants.isParecel[1][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[1][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[1][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[1][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[1][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[1][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.none, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//        }
-//        else if (Constants.whiteColor[1])
-//        {
-//            if (Constants.isParecel[1][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[1][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[1][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[1][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[1][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[1][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.none, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//        }
-//        else{
-//            editDatas.add(new NotificationEditData(R.drawable.textmassage, "TEXT MESSAGE", R.drawable.colorpicker, R.drawable.vibrate, Color.rgb(255, 255, 255),  Color.rgb(75, 173, 172)));
-//        }
-//
-//        if (Constants.redColor[2]) {
-//            if(Constants.isParecel[2][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(220, 30, 230), Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[2][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(220, 30, 230), Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[2][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(220, 30, 230), Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[2][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(220, 30, 230), Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[2][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(220, 30, 230), Color.rgb(220, 30, 230)));
-//            }
-//            else if(Constants.isParecel[2][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.none, Color.rgb(220, 30, 230), Color.rgb(220, 30, 230)));
-//            }
-//        }
-//        else if (Constants.blueColor[2])
-//        {
-//            if (Constants.isParecel[2][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[2][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[2][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[2][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[2][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//            else if (Constants.isParecel[2][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.none, Color.rgb(9, 158, 253), Color.rgb(9, 158, 253)));
-//            }
-//        }
-//        else if (Constants.greenColor[2])
-//        {
-//            if (Constants.isParecel[2][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[2][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[2][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[2][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[2][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//            else if (Constants.isParecel[2][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.none, Color.rgb(70, 230, 180), Color.rgb(70, 230, 180)));
-//            }
-//        }
-//        else if (Constants.yelloColor[2])
-//        {
-//            if (Constants.isParecel[2][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[2][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[2][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[2][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[2][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//            else if (Constants.isParecel[2][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.none, Color.rgb(255, 217, 102), Color.rgb(255, 217, 102)));
-//            }
-//        }
-//        else if (Constants.whiteColor[2])
-//        {
-//            if (Constants.isParecel[2][0]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibeone, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[2][1]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibetwo, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[2][2]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibethree, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[2][3]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibefour, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[2][4]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.infinity, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//            else if (Constants.isParecel[2][5]) {
-//                editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.none, Color.rgb(255, 255, 255), Color.rgb(255, 255, 255)));
-//            }
-//        }
-//        else{
-//            editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, R.drawable.vibrate, Color.rgb(255, 255, 255),Color.rgb(75, 173, 172)));
-//        }
+        editDatas.add(new NotificationEditData(R.drawable.reminders, "REMINDERS", R.drawable.colorpicker, image, Color.LTGRAY, color));
     }
 }

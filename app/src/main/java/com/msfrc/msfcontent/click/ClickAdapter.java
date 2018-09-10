@@ -86,7 +86,6 @@ public class ClickAdapter extends BaseAdapter{
                     clickMember.get(position).setChecked(true);
                     notifyDataSetChanged();
 
-                    Log.d("eleutheria", "position:"+position+", isChecked:"+isChecked);
                     switch(position){
                         case 0:
                             Constants.clickIndex = Constants.CLICK_MUSIC_PLAY;
@@ -117,8 +116,6 @@ public class ClickAdapter extends BaseAdapter{
                     Constants.clickCheck[position] = false;
                     clickMember.get(position).setChecked(false);
                 }
-
-                Log.d("eleutheria", "ClickAdapter clickIndex:" + Constants.clickIndex);
             }
         });
         return convertView;

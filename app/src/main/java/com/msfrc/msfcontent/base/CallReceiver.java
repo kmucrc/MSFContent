@@ -28,6 +28,10 @@ public abstract class CallReceiver extends BroadcastReceiver {
         onCallStateChanged(context, nState);
     }
 
+
+    protected abstract void onIncomingCallReceived(Context ctx);
+    protected abstract void onIncomingCallEnded(Context ctx);
+
     private void onCallStateChanged(Context context, int nState) {
         if(nLastState == nState || nState == TelephonyManager.CALL_STATE_OFFHOOK) {
             return;
@@ -39,26 +43,7 @@ public abstract class CallReceiver extends BroadcastReceiver {
                 break;
             case TelephonyManager.CALL_STATE_RINGING:
                 Log.e("eleutheria", "CALL_STATE_RINGING");
-                switch (Constants.notiCallColor) {
-                    case Constants.COLOR_WHITE:
-                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
-                        break;
-                    case Constants.COLOR_RED:
-                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("1123E119");
-                        break;
-                    case Constants.COLOR_GREEN:
-                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11B9194B");
-                        break;
-                    case Constants.COLOR_YELLOW:
-                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11002699");
-                        break;
-                    case Constants.COLOR_BLUE:
-                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11F66100");
-                        break;
-                    default:
-                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
-                        break;
-                }
+                onIncomingCallReceived(context);
         }
         nLastState = nState;
     }

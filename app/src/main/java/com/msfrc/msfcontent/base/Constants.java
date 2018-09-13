@@ -35,6 +35,7 @@ public class Constants {
     public static final int MAIN_MENU_COLOR_PICKERS = 3;
     public static final int MAIN_MENU_PREFERENCES = 4;
     public static final int MAIN_MENU_HELP_REVIEW =5;
+    public static final int MAIN_MENU_TEST =6;
 
     // CLICK INDEX
     public static final int CLICK_MUSIC_PLAY = 0;
@@ -84,6 +85,11 @@ public class Constants {
     public static boolean notiSMSCheck = false;
     public static boolean notiReminderCheck = false;
 
+
+    public static final int LOCATION_UPDATE_GPS_TIME_MILLISEC = 60000;
+    public static final int LOCATION_UPDATE_GPS_DIST_METER = 10;
+    public static final int LOCATION_UPDATE_NETWORK_TIME_MILLISEC = 60000;
+    public static final int LOCATION_UPDATE_NETWORK_DIST_METER = 10;
 
 
     public static boolean musicPage = false;

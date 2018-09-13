@@ -65,6 +65,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -211,29 +212,37 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                 startActivity(intent);
             }
         }
-//        if(isGpsEnabled) {
-//            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//            Log.d(TAG, "GPSProvider");
-//        }
-//        else if(isNetworkEnabled){
-//            location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//            Log.d(TAG, "NetworkProvider");
-//        }
         cameraId = findFrontCameraId();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
+        isGpsEnabled = mLocationManager
+                .isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        isNetworkEnabled = mLocationManager
+                .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if(isGpsEnabled) {
+            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Log.d(TAG, "GPSProvider");
+        }
+        else if(isNetworkEnabled){
+            location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            Log.d(TAG, "NetworkProvider");
+        }
+
         if(location!= null) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
             altitude = location.getAltitude();
-            if(isNetworkEnabled) {
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
-                Log.d(TAG, "NETWORKENABLED");
-            }
             if(isGpsEnabled){
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, Constants.LOCATION_UPDATE_NETWORK_TIME_MILLISEC, Constants.LOCATION_UPDATE_NETWORK_DIST_METER, this);
+                Log.d(TAG, "GPSENABLED");
+            } else if(isNetworkEnabled) {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, Constants.LOCATION_UPDATE_GPS_TIME_MILLISEC, Constants.LOCATION_UPDATE_GPS_DIST_METER, this);
+                Log.d(TAG, "NETWORKENABLED");
             }
             onLocationChanged(location);
         }
@@ -276,7 +285,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             , "android.permission.ACCESS_NOTIFICATION_POLICY"
             , "android.permission.READ_CONTACTS", "android.permission.CAMERA"
             , "android.permission.RECORD_AUDIO", "android.permission.WRITE_EXTERNAL_STORAGE"
-            , "android.permission.CALL_PHONE", "android.permission.RECEIVE_SMS"};
+            , "android.permission.CALL_PHONE", "android.permission.RECEIVE_SMS"
+            , "android.permission.ACCESS_FINE_LOCATION"};
 
     private boolean hasPermissions(String[] permissions) {
         int result;
@@ -1009,7 +1019,8 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         Log.d(TAG, "Send SMS");
         //String phoneNumber = "01063985274";//사용자 휴대폰 번호
         String phoneNumber = "";
-        String message = "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude;
+        DecimalFormat form = new DecimalFormat("#.####");
+        String message = "위도: " + form.format(latitude) + ", 경도 :" + form.format(longitude) + ", 고도" + form.format(altitude);
         SmsManager smsManager = SmsManager.getDefault();
 
         if(Constants.listPhoneNumber.size() > 0) {

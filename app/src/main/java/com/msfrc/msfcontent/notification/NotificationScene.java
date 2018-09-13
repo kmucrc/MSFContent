@@ -2,6 +2,8 @@ package com.msfrc.msfcontent.notification;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,9 +28,11 @@ import android.widget.TextView;
 
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.base.Constants;
+import com.msfrc.msfcontent.base.ReminderReceiver;
 import com.msfrc.msfcontent.connection.ConnectionScene;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,7 +51,7 @@ public class NotificationScene extends AppCompatActivity{
     private SharedPreferences settings;
 //    private TelephonyManager mTelephonyManager;
 //    private SmsStateListenr mSmsStateListner;
-    private ReminderListener mReminderListener;
+//    private ReminderListener mReminderListener;
     private AccountManager mAccountManager;
     private String email;
 
@@ -57,12 +61,12 @@ public class NotificationScene extends AppCompatActivity{
         settings = getSharedPreferences("setupdData", MODE_PRIVATE);
         baseScene();
 //        mSmsStateListner = new SmsStateListenr();
-        mReminderListener = new ReminderListener();
+//        mReminderListener = new ReminderListener();
         email = getUsername();
         Log.d(TAG, ""+email);
         IntentFilter reminderFilter = new IntentFilter();
         reminderFilter.addAction(Constants.REMINDER_ACTION_NAME);
-        registerReceiver(mReminderListener, reminderFilter);
+//        registerReceiver(mReminderListener, reminderFilter);
 //        IntentFilter smsIntentFilter = new IntentFilter();
 //        smsIntentFilter.addAction(SmsStateListenr.action);
 //        registerReceiver(mSmsStateListner, smsIntentFilter);
@@ -70,8 +74,8 @@ public class NotificationScene extends AppCompatActivity{
 //        mTelephonyManager = (TelephonyManager)getSystemService(getApplicationContext().TELEPHONY_SERVICE);
 //        mTelephonyManager.listen(mCallStateListner, PhoneStateListener.LISTEN_CALL_STATE);
         setCustomerActionBar();
-
     }
+
     public void baseScene(){
 //        boolean notiCallChecked = settings.getBoolean("notiCallCheck", Constants.notiCallCheck);
 //        boolean notiSMSChecked = settings.getBoolean("notiSMSCheck", Constants.notiSMSCheck);
@@ -149,91 +153,93 @@ public class NotificationScene extends AppCompatActivity{
         }
         return super.onOptionsItemSelected(item);
     }
-    private class CallStateListener extends PhoneStateListener{
-        @Override
-        public void onCallStateChanged(int state, String incomingNumber) {
-            super.onCallStateChanged(state, incomingNumber);
-            Log.e("eleutheria", "Call number : " + incomingNumber);
-            switch(state){
-                case TelephonyManager.CALL_STATE_RINGING:
-                    if(Constants.redColor[0]);
-//                        ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
-                    else if(Constants.blueColor[0]);
-//                        ConnectionScene.mBluetoothService.write("099EFF".getBytes());
-                    else if(Constants.greenColor[0]);
-//                        ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
-                    else if(Constants.yelloColor[0]);
-//                        ConnectionScene.mBluetoothService.write("FFD966".getBytes());
-                    else if(Constants.whiteColor[0]);
-//                        ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
-                    for(int i=0; i<=8; i++) {
-//                        ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[0].getBytes());
-                    }
-                    break;
-            }
-        }
-    }
-    private class SmsStateListenr extends BroadcastReceiver{
-        static final String action = "android.provider.Telephony.SMS_RECEIVED";
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.e("eleutheria", "sms Listener");
-            if(intent.getAction().equals(action)){
-                if(Constants.redColor[1]) {
-                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("1123E119");
-//                    ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
-                }
-                else if(Constants.blueColor[1]) {
-                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11F66100");
-//                    ConnectionScene.mBluetoothService.write("099EFF".getBytes());
-                }
-                else if(Constants.greenColor[1]) {
-                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11B9194B");
-//                    ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
-                }
-                else if(Constants.yelloColor[1]) {
-                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11002699");
-//                    ConnectionScene.mBluetoothService.write("FFD966".getBytes());
-                }
-                else if(Constants.whiteColor[1]) {
-                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
-//                    ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
-                }
-
-//                for(int i=0; i<=8; i++) {
-//                    ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[1].toString().getBytes());
-
-            }
-        }
-    }
-    public class ReminderListener extends BroadcastReceiver{
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(Constants.REMINDER_ACTION_NAME)){
-                switch (Constants.notiReminderColor) {
-                    case Constants.COLOR_WHITE:
-                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
-                        break;
-                    case Constants.COLOR_RED:
-                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("1123E119");
-                        break;
-                    case Constants.COLOR_GREEN:
-                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11B9194B");
-                        break;
-                    case Constants.COLOR_YELLOW:
-                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11002699");
-                        break;
-                    case Constants.COLOR_BLUE:
-                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11F66100");
-                        break;
-                    default:
-                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
-                        break;
-                }
-            }
-        }
-    }
+//    private class CallStateListener extends PhoneStateListener{
+//        @Override
+//        public void onCallStateChanged(int state, String incomingNumber) {
+//            super.onCallStateChanged(state, incomingNumber);
+//            Log.e("eleutheria", "Call number : " + incomingNumber);
+//            switch(state){
+//                case TelephonyManager.CALL_STATE_RINGING:
+//                    if(Constants.redColor[0]);
+////                        ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
+//                    else if(Constants.blueColor[0]);
+////                        ConnectionScene.mBluetoothService.write("099EFF".getBytes());
+//                    else if(Constants.greenColor[0]);
+////                        ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
+//                    else if(Constants.yelloColor[0]);
+////                        ConnectionScene.mBluetoothService.write("FFD966".getBytes());
+//                    else if(Constants.whiteColor[0]);
+////                        ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
+//                    for(int i=0; i<=8; i++) {
+////                        ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[0].getBytes());
+//                    }
+//                    break;
+//            }
+//        }
+//    }
+//    private class SmsStateListenr extends BroadcastReceiver{
+//        static final String action = "android.provider.Telephony.SMS_RECEIVED";
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            Log.e("eleutheria", "sms Listener");
+//            if(intent.getAction().equals(action)){
+//                if(Constants.redColor[1]) {
+//                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("1123E119");
+////                    ConnectionScene.mBluetoothService.write("DC1EE6".getBytes());
+//                }
+//                else if(Constants.blueColor[1]) {
+//                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11F66100");
+////                    ConnectionScene.mBluetoothService.write("099EFF".getBytes());
+//                }
+//                else if(Constants.greenColor[1]) {
+//                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11B9194B");
+////                    ConnectionScene.mBluetoothService.write("46E6B4".getBytes());
+//                }
+//                else if(Constants.yelloColor[1]) {
+//                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11002699");
+////                    ConnectionScene.mBluetoothService.write("FFD966".getBytes());
+//                }
+//                else if(Constants.whiteColor[1]) {
+//                    ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
+////                    ConnectionScene.mBluetoothService.write("FFFFFF".getBytes());
+//                }
+//
+////                for(int i=0; i<=8; i++) {
+////                    ConnectionScene.mBluetoothService.write(NotificationEditAdapter.parcelArray[1].toString().getBytes());
+//
+//            }
+//        }
+//    }
+//    public class ReminderListener extends BroadcastReceiver{
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            Log.e("eleutheria", "ReminderListener onReceive");
+//            if(intent.getAction().equals(Constants.REMINDER_ACTION_NAME)){
+//                switch (Constants.notiReminderColor) {
+//                    case Constants.COLOR_WHITE:
+//                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
+//                        break;
+//                    case Constants.COLOR_RED:
+//                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("1123E119");
+//                        break;
+//                    case Constants.COLOR_GREEN:
+//                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11B9194B");
+//                        break;
+//                    case Constants.COLOR_YELLOW:
+//                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11002699");
+//                        break;
+//                    case Constants.COLOR_BLUE:
+//                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11F66100");
+//                        break;
+//                    default:
+//                        ConnectionScene.mBluetoothLeService.writeColorCharacteristic("11000000");
+//                        break;
+//                }
+//            }
+//        }
+//    }
 
     public String getUsername() {
         AccountManager manager = AccountManager.get(this);

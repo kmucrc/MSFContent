@@ -143,6 +143,12 @@
         <activity android:name=".click.camera.CameraActivity"/>
         <activity android:name=".click.camera.VideoActivity"/>
         <activity android:name=".click.camera.SelfieCamera"/>
+        <activity android:name=".FuntionTest.FuntionTest"
+            tools:ignore="InnerclassSeparator">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".home.UIScene" />
+        </activity>
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -150,14 +156,21 @@
         <activity android:name=".connection.DeviceScanActivity"/>
         <service android:name=".connection.BluetoothLeService" android:enabled="true"/>
 
+        <receiver android:name=".base.IncomingCallReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
         <receiver android:name=".base.SmsReceiver">
             <intent-filter android:priority="1000">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".notification.NotificationScene$ReminderListener">
+        <receiver android:name=".base.ReminderReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.EVENT_REMINDER" />
+                <action android:name="android.provider.CalendarContract.RemindersColumns" />
+                <action android:name="android.provider.CalendarContract.EventsColumns" />
             </intent-filter>
         </receiver>
 

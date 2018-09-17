@@ -25,6 +25,7 @@ public class Constants {
     public static final int CAMERA_OPEN = 11;
     public static final int CAMERA_CAPTURE = 12;
     public static final String DEVICE_NAME = "device_name";
+    public static final String REMINDER_ACTION_NAME = "android.intent.action.EVENT_REMINDER";
 
     // MAINMENU INDEX
     public static final int MAIN_MENU_CONNECTION = 0;
@@ -34,6 +35,7 @@ public class Constants {
     public static final int MAIN_MENU_COLOR_PICKERS = 3;
     public static final int MAIN_MENU_PREFERENCES = 4;
     public static final int MAIN_MENU_HELP_REVIEW =5;
+    public static final int MAIN_MENU_TEST =6;
 
     // CLICK INDEX
     public static final int CLICK_MUSIC_PLAY = 0;
@@ -68,18 +70,27 @@ public class Constants {
 
     public static ArrayList<String> listPhoneNumber = new ArrayList<String>();
 
-//    public static final int CLICK_SILENT = 0;
-//    public static final int CLICK_SOUND = 1;
-//    public static final int CLICK_REJECTCALL = 2;
-//    public static int mannermodeSingle = CLICK_SILENT;
-//    public static int mannermodeDouble = CLICK_SOUND;
-//    public static int mannermodeHold = CLICK_REJECTCALL;
+    // COLOR INDEX
+    public static final int COLOR_WHITE = 0;
+    public static final int COLOR_RED = 1;
+    public static final int COLOR_GREEN = 2;
+    public static final int COLOR_YELLOW = 3;
+    public static final int COLOR_BLUE = 4;
+
+    public static int notiCallColor = COLOR_WHITE;
+    public static int notiSMSColor = COLOR_WHITE;
+    public static int notiReminderColor = COLOR_WHITE;
+
+    public static boolean notiCallCheck = false;
+    public static boolean notiSMSCheck = false;
+    public static boolean notiReminderCheck = false;
 
 
-    public static final int REQUEST_IMAGE_CAPTURE = 13;
-    public static final int REQUEST_CAPTURE = 14;
+    public static final int LOCATION_UPDATE_GPS_TIME_MILLISEC = 60000;
+    public static final int LOCATION_UPDATE_GPS_DIST_METER = 10;
+    public static final int LOCATION_UPDATE_NETWORK_TIME_MILLISEC = 60000;
+    public static final int LOCATION_UPDATE_NETWORK_DIST_METER = 10;
 
-    public static final int REQUEST_CONTACT = 15;
 
     public static boolean musicPage = false;
     public static boolean cameraPage = false;

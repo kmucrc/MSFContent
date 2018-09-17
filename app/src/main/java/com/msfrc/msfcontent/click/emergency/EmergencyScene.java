@@ -176,7 +176,6 @@ public class EmergencyScene extends AppCompatActivity implements MenuItem.OnMenu
                     emergencyContactData.add(new EmergencyListData(name, number));
                     Constants.listPhoneNumber.add(number);
 
-                    Log.e("eleutheria", "ContactData size : " + emergencyContactData.size());
                     saveContactsreferences(emergencyContactData);
                 } else {
                     Toast.makeText(getApplicationContext(),getString(R.string.str_emergency_duplicate_number),

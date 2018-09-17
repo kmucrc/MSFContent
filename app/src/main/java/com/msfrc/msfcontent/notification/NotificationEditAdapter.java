@@ -1,5 +1,8 @@
 package com.msfrc.msfcontent.notification;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,12 +25,15 @@ public class NotificationEditAdapter extends BaseAdapter{
     private ArrayList<NotificationColorData> datas = new ArrayList<NotificationColorData>();
     private ArrayList<NotificationEditData> editDatas = new ArrayList<NotificationEditData>();
     private LayoutInflater inflater;
+    private Context mContext;
+    private SharedPreferences settings;
     private static final String TAG = "Notification Edit";
     public static boolean colorScene = false;
     public static String[] parcelArray = new String[5];
-    public NotificationEditAdapter(LayoutInflater inflater, ArrayList<NotificationEditData> notificationMember){
+    public NotificationEditAdapter(LayoutInflater inflater, ArrayList<NotificationEditData> notificationMember, Context context){
         this.inflater= inflater;
         this.notificationMember = notificationMember;
+        this.mContext = context;
     }
     @Override
     public int getCount() {
@@ -87,6 +93,7 @@ public class NotificationEditAdapter extends BaseAdapter{
         yellowButton.setTag(position);
         whiteButton.setTag(position);
         greenButton.setTag(position);
+
         colorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,11 +123,27 @@ public class NotificationEditAdapter extends BaseAdapter{
 //                        mTextView.setTextColor(Color.rgb(220, 30, 230));
                         mTextView.setBackgroundColor(Color.rgb(220, 30, 230));
                         colorButton.setVisibility(View.VISIBLE);
-                        Constants.redColor[position] = true;
-                        Constants.blueColor[position] = false;
-                        Constants.greenColor[position] = false;
-                        Constants.yelloColor[position] = false;
-                        Constants.whiteColor[position] = false;
+
+                        Activity act = (Activity) mContext;
+                        settings = act.getSharedPreferences("setupdData", mContext.MODE_PRIVATE);
+
+                        SharedPreferences.Editor editor = settings.edit();
+                        switch (position) {
+                            case 0:
+                                Constants.notiCallColor = Constants.COLOR_RED;
+                                editor.putInt("notiCallColor", Constants.notiCallColor);
+                                break;
+                            case 1:
+                                Constants.notiSMSColor = Constants.COLOR_RED;
+                                editor.putInt("notiSMSColor", Constants.notiSMSColor);
+                                break;
+                            case 2:
+                                Constants.notiReminderColor = Constants.COLOR_RED;
+                                editor.putInt("notiReminderColor", Constants.notiReminderColor);
+                                break;
+                        }
+                        editor.commit();
+
                     }
                 });
                 blueButton.setOnClickListener(new View.OnClickListener() {
@@ -135,11 +158,26 @@ public class NotificationEditAdapter extends BaseAdapter{
 //                        mTextView.setTextColor(Color.rgb(9, 158, 253));
                         mTextView.setBackgroundColor(Color.rgb(9, 158, 253));
                         colorButton.setVisibility(View.VISIBLE);
-                        Constants.redColor[position] = false;
-                        Constants.blueColor[position] = true;
-                        Constants.greenColor[position] = false;
-                        Constants.yelloColor[position] = false;
-                        Constants.whiteColor[position] = false;
+
+                        Activity act = (Activity) mContext;
+                        settings = act.getSharedPreferences("setupdData", mContext.MODE_PRIVATE);
+
+                        SharedPreferences.Editor editor = settings.edit();
+                        switch (position) {
+                            case 0:
+                                Constants.notiCallColor = Constants.COLOR_BLUE;
+                                editor.putInt("notiCallColor", Constants.notiCallColor);
+                                break;
+                            case 1:
+                                Constants.notiSMSColor = Constants.COLOR_BLUE;
+                                editor.putInt("notiSMSColor", Constants.notiSMSColor);
+                                break;
+                            case 2:
+                                Constants.notiReminderColor = Constants.COLOR_BLUE;
+                                editor.putInt("notiReminderColor", Constants.notiReminderColor);
+                                break;
+                        }
+                        editor.commit();
                     }
                 });
                 whiteButton.setOnClickListener(new View.OnClickListener() {
@@ -151,14 +189,29 @@ public class NotificationEditAdapter extends BaseAdapter{
                         whiteButton.setVisibility(View.INVISIBLE);
                         greenButton.setVisibility(View.INVISIBLE);
                         mTextView.setVisibility(View.VISIBLE);
-                        mTextView.setTextColor(Color.BLACK);//show text color
+                        //mTextView.setTextColor(Color.BLACK);//show text color
                         mTextView.setBackgroundColor(Color.WHITE);
                         colorButton.setVisibility(View.VISIBLE);
-                        Constants.redColor[position] = false;
-                        Constants.blueColor[position] = false;
-                        Constants.greenColor[position] = false;
-                        Constants.yelloColor[position] = false;
-                        Constants.whiteColor[position] = true;
+
+                        Activity act = (Activity) mContext;
+                        settings = act.getSharedPreferences("setupdData", mContext.MODE_PRIVATE);
+
+                        SharedPreferences.Editor editor = settings.edit();
+                        switch (position) {
+                            case 0:
+                                Constants.notiCallColor = Constants.COLOR_WHITE;
+                                editor.putInt("notiCallColor", Constants.notiCallColor);
+                                break;
+                            case 1:
+                                Constants.notiSMSColor = Constants.COLOR_WHITE;
+                                editor.putInt("notiSMSColor", Constants.notiSMSColor);
+                                break;
+                            case 2:
+                                Constants.notiReminderColor = Constants.COLOR_WHITE;
+                                editor.putInt("notiReminderColor", Constants.notiReminderColor);
+                                break;
+                        }
+                        editor.commit();
                     }
                 });
                 greenButton.setOnClickListener(new View.OnClickListener() {
@@ -173,11 +226,26 @@ public class NotificationEditAdapter extends BaseAdapter{
 //                        mTextView.setTextColor(Color.rgb(70, 230, 180));
                         mTextView.setBackgroundColor(Color.rgb(70, 230, 180));
                         colorButton.setVisibility(View.VISIBLE);
-                        Constants.redColor[position] = false  ;
-                        Constants.blueColor[position] = false;
-                        Constants.greenColor[position] = true;
-                        Constants.yelloColor[position] = false;
-                        Constants.whiteColor[position] = false;
+
+                        Activity act = (Activity) mContext;
+                        settings = act.getSharedPreferences("setupdData", mContext.MODE_PRIVATE);
+
+                        SharedPreferences.Editor editor = settings.edit();
+                        switch (position) {
+                            case 0:
+                                Constants.notiCallColor = Constants.COLOR_GREEN;
+                                editor.putInt("notiCallColor", Constants.notiCallColor);
+                                break;
+                            case 1:
+                                Constants.notiSMSColor = Constants.COLOR_GREEN;
+                                editor.putInt("notiSMSColor", Constants.notiSMSColor);
+                                break;
+                            case 2:
+                                Constants.notiReminderColor = Constants.COLOR_GREEN;
+                                editor.putInt("notiReminderColor", Constants.notiReminderColor);
+                                break;
+                        }
+                        editor.commit();
                     }
                 });
                 yellowButton.setOnClickListener(new View.OnClickListener(){
@@ -193,11 +261,26 @@ public class NotificationEditAdapter extends BaseAdapter{
 //                        mTextView.setTextColor(Color.rgb(255, 217, 102));
                         mTextView.setBackgroundColor(Color.rgb(255, 217, 102));
                         colorButton.setVisibility(View.VISIBLE);
-                        Constants.redColor[position] = false;
-                        Constants.blueColor[position] = false;
-                        Constants.greenColor[position] = false;
-                        Constants.yelloColor[position] = true;
-                        Constants.whiteColor[position] = false;
+
+                        Activity act = (Activity) mContext;
+                        settings = act.getSharedPreferences("setupdData", mContext.MODE_PRIVATE);
+
+                        SharedPreferences.Editor editor = settings.edit();
+                        switch (position) {
+                            case 0:
+                                Constants.notiCallColor = Constants.COLOR_YELLOW;
+                                editor.putInt("notiCallColor", Constants.notiCallColor);
+                                break;
+                            case 1:
+                                Constants.notiSMSColor = Constants.COLOR_YELLOW;
+                                editor.putInt("notiSMSColor", Constants.notiSMSColor);
+                                break;
+                            case 2:
+                                Constants.notiReminderColor = Constants.COLOR_YELLOW;
+                                editor.putInt("notiReminderColor", Constants.notiReminderColor);
+                                break;
+                        }
+                        editor.commit();
                     }
                 });
             }

@@ -49,9 +49,9 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.internal.telephony.ITelephony;
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.base.Constants;
-import com.msfrc.msfcontent.base.ITelephony;
 import com.msfrc.msfcontent.click.camera.CameraActivity;
 import com.msfrc.msfcontent.click.camera.CameraSceneAdapter;
 import com.msfrc.msfcontent.click.camera.SelfieCamera;
@@ -65,6 +65,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -211,29 +212,37 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
                 startActivity(intent);
             }
         }
-//        if(isGpsEnabled) {
-//            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//            Log.d(TAG, "GPSProvider");
-//        }
-//        else if(isNetworkEnabled){
-//            location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//            Log.d(TAG, "NetworkProvider");
-//        }
         cameraId = findFrontCameraId();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
+        isGpsEnabled = mLocationManager
+                .isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        isNetworkEnabled = mLocationManager
+                .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if(isGpsEnabled) {
+            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Log.d(TAG, "GPSProvider");
+        }
+        else if(isNetworkEnabled){
+            location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            Log.d(TAG, "NetworkProvider");
+        }
+
         if(location!= null) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
             altitude = location.getAltitude();
-            if(isNetworkEnabled) {
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
-                Log.d(TAG, "NETWORKENABLED");
-            }
             if(isGpsEnabled){
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, Constants.LOCATION_UPDATE_NETWORK_TIME_MILLISEC, Constants.LOCATION_UPDATE_NETWORK_DIST_METER, this);
+                Log.d(TAG, "GPSENABLED");
+            } else if(isNetworkEnabled) {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, Constants.LOCATION_UPDATE_GPS_TIME_MILLISEC, Constants.LOCATION_UPDATE_GPS_DIST_METER, this);
+                Log.d(TAG, "NETWORKENABLED");
             }
             onLocationChanged(location);
         }
@@ -275,7 +284,9 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
             , "android.permission.SEND_SMS", "android.permission.READ_PHONE_STATE"
             , "android.permission.ACCESS_NOTIFICATION_POLICY"
             , "android.permission.READ_CONTACTS", "android.permission.CAMERA"
-            , "android.permission.RECORD_AUDIO", "android.permission.WRITE_EXTERNAL_STORAGE"};
+            , "android.permission.RECORD_AUDIO", "android.permission.WRITE_EXTERNAL_STORAGE"
+            , "android.permission.CALL_PHONE", "android.permission.RECEIVE_SMS"
+            , "android.permission.ACCESS_FINE_LOCATION"};
 
     private boolean hasPermissions(String[] permissions) {
         int result;
@@ -834,7 +845,7 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
         if(isMakeDir) {
             String currentDateandTime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-            Log.e("eleutheria", "currentTime : " + currentDateandTime);
+
             Constants.record = true;
             mRecorder = new MediaRecorder();
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -1008,15 +1019,16 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
         Log.d(TAG, "Send SMS");
         //String phoneNumber = "01063985274";//사용자 휴대폰 번호
         String phoneNumber = "";
-        String message = "위도: " + latitude + ", 경도 :" + longitude + ", 고도" + altitude;
+        DecimalFormat form = new DecimalFormat("#.####");
+        String message = "위도: " + form.format(latitude) + ", 경도 :" + form.format(longitude) + ", 고도" + form.format(altitude);
         SmsManager smsManager = SmsManager.getDefault();
 
         if(Constants.listPhoneNumber.size() > 0) {
             for(String number : Constants.listPhoneNumber) {
                 phoneNumber = number;
                 Log.e("eleutheria", "phneNumber : " + phoneNumber);
+                smsManager.sendTextMessage(phoneNumber, null, message, null, null);
             }
-            smsManager.sendTextMessage(phoneNumber, null, message, null, null);
         }
         mActivity.runOnUiThread(new Runnable() {
             @Override
@@ -1050,23 +1062,6 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
 
     public static void rejectCall() {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, "not yet.", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //above api 29
-//        TelecomManager telecomMgr = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
-//
-//        if (telecomMgr != null) {
-//            boolean success = telecomMgr.endCall();
-//            // success == true if call was terminated.
-//        }
-
-
-        /*
         TelephonyManager telephonyMgr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
 
         try {
@@ -1077,42 +1072,19 @@ public class ConnectionScene extends AppCompatActivity implements LocationListen
 
                 //telephonyService.silenceRinger();
                 telephonyService.endCall();
-                Log.e("eleutheria","endcall");
 
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException | SecurityException e) {
                 e.printStackTrace();
-            }*/
+            }
 
+//above api 29
+//        TelecomManager telecomMgr = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
+//
+//        if (telecomMgr != null) {
+//            boolean success = telecomMgr.endCall();
+//            // success == true if call was terminated.
+//        }
 
-//        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-//        Class clazz = null;
-//        try {
-//            clazz = Class.forName(telephonyManager.getClass().getName());
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        Method method = null;
-//        try {
-//            method = clazz.getDeclaredMethod("getITelephony");
-//        } catch (NoSuchMethodException e) {
-//            e.printStackTrace();
-//        }
-//        method.setAccessible(true);
-
-
-//        ITelephony telephonyService = null;
-//        try {
-//            telephonyService = (ITelephony) method.invoke(telephonyManager);
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        } catch (InvocationTargetException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            telephonyService.endCall();
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public static void findPhone() {

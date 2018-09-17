@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.msfrc.msfcontent.FuntionTest.FuntionTest;
 import com.msfrc.msfcontent.R;
 import com.msfrc.msfcontent.base.Constants;
 import com.msfrc.msfcontent.click.ClickScene;
@@ -69,6 +70,7 @@ public class UIScene extends AppCompatActivity implements AdapterView.OnItemClic
         datas.add(new UiSceneData(R.drawable.colorpicker, "COLOR PICKERS"));
         datas.add(new UiSceneData(R.drawable.preference, "PREFERENCES"));
         datas.add(new UiSceneData(R.drawable.help, "HELP & REVIEW"));
+//        datas.add(new UiSceneData(R.drawable.help, "FUNTIONTEST"));
     }
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -102,6 +104,10 @@ public class UIScene extends AppCompatActivity implements AdapterView.OnItemClic
             case Constants.MAIN_MENU_HELP_REVIEW:
                 Intent helpSceneIntent = new Intent(getApplicationContext(), Help.class);
                 startActivity(helpSceneIntent);
+                break;
+            case Constants.MAIN_MENU_TEST:
+                Intent testSceneIntent = new Intent(getApplicationContext(), FuntionTest.class);
+                startActivity(testSceneIntent);
                 break;
         }
     }
